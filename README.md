@@ -5,8 +5,9 @@ Repository for ADP project (v. 0.01 alpha)
 
 ![pipeline](img/pipeline.png)
 
+## Main task
 Our main goal is to create tool for an easy construction of a consensus tree based on a list of species names. 
 
 Additional functionalities:
-- 
-*
+- anything 
+* kkk
