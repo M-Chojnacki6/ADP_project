@@ -3,7 +3,7 @@
 *by Mateusz Chojnacki, Krzysztof Łukasz, Younginn Park and Daniel Zalewski*
 
 ## Overview
-Easy Consensus Tree allows the user to easily construct a whole-proteome based consensus tree based on a specified list of species names. It automates the workflow from downloading proteomes and clustering sequences to building individual cluster trees and generating a final consensus tree, ensuring a streamlined and efficient process.
+Easy Consensus Tree allows the user to easily construct a whole-proteome based consensus tree based on a specified list of species names. It automates the workflow from downloading proteomes and clustering sequences to building individual cluster trees and generating a final consensus tree, ensuring a streamlined and efficient process. The user-friendly setup makes it accessible even for those with minimal bioinformatics experience.
 
 ## Workflow outline
 
