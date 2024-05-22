@@ -26,6 +26,7 @@ Benchmarking
 - Prepare set of examples.
 
 Additional functionalities:
+- Option for the user to define species for an outgroup
 - Adding supertrees (fasturec)
 - Cutoff for number of sequences / number of genomes
 - Type of consensus and cutoff to consensus
