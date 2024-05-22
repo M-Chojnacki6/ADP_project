@@ -30,6 +30,6 @@ Additional functionalities:
 - Cutoff for number of sequences / number of genomes
 - Type of consensus and cutoff to consensus
 
- >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true species relationships, especially if the provided species are distantly related.
+ >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
 
  [old scripts](https://github.com/M-Chojnacki6/ADP_working)
