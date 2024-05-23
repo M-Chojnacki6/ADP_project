@@ -9,8 +9,8 @@
 FILE=$1
 
 # 
-rm org_accs.txt
-rm org_spec.txt
+rm -f org_accs.txt
+rm -f org_spec.txt
 
 # Remove \r from $FILE - a problem on Windows
 sed -i 's/\r//g' $FILE
