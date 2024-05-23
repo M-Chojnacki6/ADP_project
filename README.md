@@ -13,7 +13,7 @@
 Our main goal is to create a tool for an easy construction of a consensus tree based on a user-defined list of species names.
 
 - Prepare scripts for each of the steps of the workflow:
-  - [ ] Dowloading proteomes from database (NCBI datasets/ Uniprot), Setting up short aliases for each of the species and renaming sequences (**Output: a single multifasta file**)
+  - [ ] Dowloading proteomes from database (Uniprot), Setting up short aliases for each of the species and renaming sequences (**Output: a single multifasta file**)
   - [ ] Clustering with MMseqs2, Setting the cutoff of cluster sizes at 10% of all species by default (or 3 in case of small number of species, `max(3, 0.1*num_of_species)`), filtering non-paralgous clusters (filtering=removing whole clusters or removing individual sequences?) (**Output: tsv file for cluster memberships**) and saving clusters sequences as multifasta files (**Output: a directory with multiple multifasta files with cluster sequences**)
   - [ ] MSA for each of the clusters (with Muscle, Mafft or ClustalW) (**Output: a directory with multiple multifasta files with aligned cluster sequences**)
   - [ ] Tree construcion for each of the clusters (NJ - watch out for negative branch weights) (**Output: file with multiple newick trees for each of the cluster**)
