@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #uniprot ID dziala dobrze, reszta chyba poprawic URL trzeba, nie wiem co z tym emailem
 
 
