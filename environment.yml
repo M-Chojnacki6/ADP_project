@@ -1,0 +1,13 @@
+name: ect_env
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - ncbi-datasets-cli
+  - pip
+  - pip:
+      - pandas
+      - numpy
+
