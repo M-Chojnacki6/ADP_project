@@ -1,11 +1,8 @@
 import os
 import argparse
 import requests
-from Bio import Entrez
-from Bio import SeqIO
 import re
 
-Entrez.email = "danil.zalewski@gmail.com"
 taxa_library="taxa_library.csv"
 
 
@@ -68,24 +65,6 @@ def check_taxa(name):
             return line[3] 
     return None
 
-
-#def read_species_from_txt(filename):
-#    """Reads species names from a TXT file."""
-#    species_list = []
-#    with open(filename, 'r') as txtfile:
-#        for line in txtfile:
-#            ## testing format of the name ???
-#            species_list.append(line.strip())
-#    return species_list
-
-#def read_ids_from_txt(filename):
-#    """Reads organism IDs from a TXT file."""
-#    id_list = []
-#    with open(filename, 'r') as txtfile:
-#        for line in txtfile:
-#            id_list.append(line.strip())
-#    return id_list
-
 def search_proteome_ncbi(species_name):
     """Searches for the proteome of a species in NCBI and returns the ID."""
     handle = Entrez.esearch(db="protein", term=f"{species_name}[Organism] AND proteome[filter]", retmax=1)
@@ -132,22 +111,11 @@ def search_proteome_uniprot(species_name):
         url=f"https://rest.uniprot.org/proteomes/stream?format=json&query=%28{species_name}%29+AND+%28proteome_type%3A1%29"
     else:
         url = f"https://rest.uniprot.org/proteomes/stream?format=json&query=%28{species_name.replace(' ','+')}%29+AND+%28proteome_type%3A1%29"
-#    print(f"\nurl = {url}")
     response = requests.get(url)
     if response.status_code == 200:
         lines = response.json()['results']
         if len(lines):
             return get_data_from_json(lines[0])
-    #        print(lines["taxonomy"])
-#            UPid=lines["id"]
-#            taxa=lines["taxonomy"]["taxonId"]
-#            names=[lines["taxonomy"]["scientificName"]]
-#            if "commonName" in lines["taxonomy"].keys():
-#                names.append(lines["taxonomy"]["commonName"])
-#            if "synonyms" in lines["taxonomy"].keys():
-#                names+=lines["taxonomy"]["synonyms"]
-#            print(f"UniprotI: {UPid}\ntaksonomy ID: {taxa}\nnames: {names}")
-#            return [UPid,taxa,names]
         else:
             print(f"Species {species_name} not found in UniProt - Refererence proteomes;\nChecking in whole UniProt Proteome")
             if id_type==2:
@@ -163,14 +131,7 @@ def search_proteome_uniprot(species_name):
     print(f"Error searching for {species_name} in UniProt: {response.status_code}")
     print(f"Please check, whether species anme is correct and whether proteome for this species exists in Uniprot/NCBI")
     return None
-"""
-https://rest.uniprot.org/proteomes/stream?format=json&query=%28Ipomoea+nil%29
-https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Eukaryota/UP000243839/UP000243839_35883.fasta.gz
-https://rest.uniprot.org/proteomes/stream?format=json&query=%28*%29+AND+%28proteome_type%3A1%29
-https://www.uniprot.org/proteomes/{UPid}
-https://rest.uniprot.org/proteomes/stream?format=json&query=%281566351%29+AND+%28proteome_type%3A1%29
-https://rest.uniprot.org/proteomes/stream?format=json&query=upid%3AUP000000355
-"""
+
 def clasify_id(name):
     if re.match("^UP[0-9]+",name):
         return 1
@@ -230,34 +191,6 @@ def process_by_name(input_txt, output_directory, database):
         else:
             print(f"No proteome found for {species}")
 
-def process_by_species(input_txt, output_directory, database):
-    species_list = read_species_from_txt(input_txt)
-    for species in species_list:
-        print(f"\nProcessing {species}...")
-        if database == 0:
-            proteome = search_proteome_ncbi(species)
-            fetch_proteome_func = fetch_proteome_ncbi
-        elif database == 1:
-            proteome = search_proteome_uniprot(species)
-            fetch_proteome_func = fetch_proteome_uniprot
-        if check_taxa(proteome[1]) is None:
-            if proteome:
-                ln=fetch_proteome_func(proteome[0],proteome[1],proteome[2], output_directory)
-                print(f"Proteome for {species} saved as {output_directory}{ln}")
-            else:
-                print(f"No proteome found for {species}")
-
-def process_by_id(input_txt, output_directory, database):
-    id_list = read_ids_from_txt(input_txt)
-    for org_id in id_list:
-        print(f"Processing ID {org_id}...")
-        output_filename = f"{output_directory}/{org_id}_proteome.gb" if database == 0 else f"{output_directory}/{org_id}_proteome.fasta"
-        if database == 0:
-            fetch_proteome_ncbi(org_id, output_filename)
-        elif database == 1:
-            fetch_proteome_uniprot(org_id, output_filename)
-        print(f"Proteome for ID {org_id} saved as {output_filename}")
-
 def main():
     inputs=parse_args()
     if not os.path.exists("proteom_database/"):
@@ -272,10 +205,6 @@ def main():
         print(f"{' '*13}> Fetch proteomes < \n\n{'#'*20}START{'#'*20}")
         print(f"\nInput file:\t\t\t{inputs[0]}\nOutput directory:\t\t{inputs[1]}\ndatabase:\t\t\t{inputs[2]}")
         process_by_name(inputs[0], inputs[1], inputs[2]) 
-#        if inputs[3]:
-#            process_by_id(inputs[0], inputs[1], inputs[2])
-#        else:
-#            process_by_species(inputs[0], inputs[1], inputs[2])
 
 if __name__ == "__main__":
     main()
