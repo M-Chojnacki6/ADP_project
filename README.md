@@ -18,7 +18,7 @@ Our main goal is to create a tool for an easy construction of a consensus tree b
   - [ ] MSA for each of the clusters (with Muscle, Mafft or ClustalW) (**Output: a directory with multiple multifasta files with aligned cluster sequences**)
   - [ ] Tree construcion for each of the clusters (NJ - watch out for negative branch weights) (**Output: file with multiple newick trees for each of the cluster**)
   - [ ] Construction of consensus tree based on cluster trees with DendroPy/... (**Output: newick file**)
-- [ ] Prepare environment setup for the user (`.yml` file) with [ncbi-datasets](https://anaconda.org/conda-forge/ncbi-datasets-cli), [mafft](https://anaconda.org/bioconda/mafft), specific python version (e.g. 3.10) and python packages (biopython, pandas, dendropy, numpy, ...), for this having a miniforge3 (mamba, recommended) or conda should be a requirement for the user (add to documentation)
+- [ ] Prepare environment setup for the user (`.yml` file) with [mafft](https://anaconda.org/bioconda/mafft), specific python version (e.g. 3.10) and python packages (biopython, pandas, dendropy, numpy, entrez...), for this having a miniforge3 (mamba, recommended) or conda should be a requirement for the user (add to documentation)
 - [ ] Prepare complete documentation for user
 
 Benchmarking
