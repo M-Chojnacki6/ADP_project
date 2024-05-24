@@ -76,7 +76,7 @@ def get_data_from_json_NCBI(results):
     names=[results["organism"]['organism_name']]
     if 'common_name' in results["organism"].keys():
         names.append(results["organism"]['common_name'])
-    print(f"NCBI id: {NCBIid}\ntaksonomy ID: {taxon}\nnames: {names}")
+    print(f"NCBI ID: {NCBIid}\ntaksonomy ID: {taxon}\nnames: {names}")
     return [NCBIid,taxon,names]
 
 def search_proteome_ncbi(species_name,id_type):
@@ -147,7 +147,7 @@ def get_data_from_json_UniProt(response):
         names.append(response["taxonomy"]["commonName"])
     if "synonyms" in response["taxonomy"].keys():
         names+=response["taxonomy"]["synonyms"]
-    print(f"UniprotI: {UPid}\ntaksonomy ID: {taxon}\nnames: {names}")
+    print(f"UniProt ID: {UPid}\ntaksonomy ID: {taxon}\nnames: {names}")
     return [UPid,taxon,names]
 
 
@@ -214,10 +214,6 @@ def search_proteome_uniprot(species_name,id_type):
                         r.append(lines[0]['genomeAssembly']['assemblyId'])
                         return r
     return None
-    
-#    print(f"Error searching for {species_name} in UniProt: {response.status_code}")
-#    print(f"Please check, whether species anme is correct and whether proteome for this species exists in Uniprot/NCBI")
-#    return None
 
 def clasify_id(name):
     if re.match("^UP[0-9]+",name):
@@ -352,6 +348,7 @@ def main():
         paths=process_by_name(inputs[0], inputs[1])
         for p in paths:
             print(p)
+        return paths
 
 if __name__ == "__main__":
     main()
