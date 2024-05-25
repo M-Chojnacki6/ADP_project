@@ -9,6 +9,30 @@
 
 ![pipeline](img/pipeline.png)
 
+## Requirements
+
+
+To run this tool, you need to have `conda` installed. We recommend using [`miniforge`](https://github.com/conda-forge/miniforge), which is a lightweight installer for `conda`.
+
+```{bash}
+# Instruction for installing miniforge
+# Run
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+# OR
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+
+# Then
+bash Miniforge3-$(uname)-$(uname -m).sh
+```
+
+
+```
+# Go to the directory with the file environment.yml
+# Run
+conda env create -f environment.yml
+```
+
+
 ## TO-DO list
 Our main goal is to create a tool for an easy construction of a consensus tree based on a user-defined list of species names.
 
