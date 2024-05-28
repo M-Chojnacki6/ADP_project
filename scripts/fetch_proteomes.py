@@ -1,3 +1,18 @@
+#!/usr/bin/env python3
+
+"""
+Script Name: my_script.py
+
+Version: 4
+
+Description:
+This script performs [brief description of what the script does].
+
+Usage:
+    python fetch_proteomes.py <-i species_list> [-o output_directory]
+
+"""
+
 import os
 import argparse
 import requests
