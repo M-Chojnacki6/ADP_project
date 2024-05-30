@@ -6,7 +6,7 @@ Script Name: my_script.py
 Version: 4
 
 Description:
-This script performs [brief description of what the script does].
+Script for fetching proteomes from Uniprot or NCBI database.
 
 Usage:
     python fetch_proteomes.py <-i species_list> [-o output_directory]
