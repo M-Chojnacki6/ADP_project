@@ -14,19 +14,21 @@
 
 To run this tool, you need to have `conda` installed. We recommend using [`miniforge`](https://github.com/conda-forge/miniforge), which is a lightweight installer for `conda`.
 
+
+Instruction for installing miniforge
 ```{bash}
-# Instruction for installing miniforge
 # Run
 curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-# OR
+```
+OR
+```{bash}
 wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-
 # Then
 bash Miniforge3-$(uname)-$(uname -m).sh
 ```
 
 
-```
+```{bash}
 # Go to the directory with the file environment.yml
 # Run
 conda env create -f environment.yml
