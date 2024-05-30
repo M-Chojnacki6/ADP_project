@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Script Name: my_script.py
+Script Name: fetch_proteomes.py
 
 Version: 4
 
