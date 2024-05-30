@@ -19,9 +19,7 @@ Instruction for installing miniforge
 ```{bash}
 # Run
 curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-```
-OR
-```{bash}
+# OR
 wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 # Then
 bash Miniforge3-$(uname)-$(uname -m).sh
