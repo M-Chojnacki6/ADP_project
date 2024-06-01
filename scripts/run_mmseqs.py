@@ -31,7 +31,6 @@ default 0""",default=0)
 
 
     args = parser.parse_args()
-    print(args)
     in_file=""
     if args.input is None:
         print(f"Provide input file")
@@ -71,11 +70,11 @@ def main():
         print(f"{' '*16}> Rum mmsq2 < \n\n{'#'*20}START{'#'*20}")
         print(f"\nInput file:\t\t\t{inputs[0]}\nMin seq identity:\t\t{inputs[1]}\nClustering mode:\t\t{inputs[2]}\nCoverage mode:\t\t\t{inputs[3]}\nCoverage:\t\t{inputs[4]}")
         output=inputs[0].replace(".fasta.gz","")
-        if os.path.isfile(f"{outputs}_rep_seq.fasta"):
+        if os.path.isfile(f"{output}_rep_seq.fasta"):
             os.system(f"rm {output}_rep_seq.fasta")
-        if os.path.isfile(f"{outputs}_cluster.tsv"):
+        if os.path.isfile(f"{output}_cluster.tsv"):
             os.system(f"rm {output}_cluster.tsv")
-        if os.path.isfile(f"{outputs}_all_seqs.fasta"):
+        if os.path.isfile(f"{output}_all_seqs.fasta"):
             os.system(f"rm {output}_all_seqs.fasta")
         print(f"Output files:\t\t\t{output} [_all_seq.fasta, _cluster.tsv]")
         os.system(f"mmseqs easy-cluster {inputs[0]} {output} working_dir/tmpDir --min-seq-id {inputs[1]} --cluster-mode {inputs[2]} --cov-mode {inputs[3]} -c {inputs[4]}")
