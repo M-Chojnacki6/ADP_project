@@ -31,9 +31,6 @@ def parse_args():
         in each cluster, should be 0 <= c < 1; default: 0.1""",
         default=0.1)
     args = parser.parse_args()
-
-
-    print(args)
     in_file=""
     if args.input is None:
         print(f"Provide input file")

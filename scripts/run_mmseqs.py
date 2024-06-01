@@ -49,10 +49,14 @@ default 0""",default=0)
             print("parametr: msi = {args.msi[0]} out of range, changing to 0")
     c=0.8
     if isinstance(args.c,list):
-        if args.c[0]>=0 and args.c[0]<1:
-            c=args.c[0]
+        if float(args.c[0])>=0 and float(args.c[0])<1:
+            c=float(args.c[0])
         else:
             print("parametr: msi = {args.c[0]} out of range, changing to 0.800")
+    if isinstance(args.covMode,list):
+        args.covMode=args.covMode[0]
+    if isinstance(args.clusterMode,list):
+        args.clusterMode=args.clusterMode[0]
 #    mmseq_params=""
 #    if isinstance(args.mmseq_params,list):
 #        mmseq_params=args.mmseq_params[0]
