@@ -25,13 +25,17 @@ wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforg
 bash Miniforge3-$(uname)-$(uname -m).sh
 ```
 
+## Intallation
 
 ```{bash}
-# Go to the directory with the file environment.yml
+git clone https://github.com/M-Chojnacki6/ADP_project.git
+
+# Go to the project directory
+cd ADP_project
+
 # Run
 conda env create -f environment.yml
 ```
-
 
 ## TO-DO list
 Our main goal is to create a tool for an easy construction of a consensus tree based on a user-defined list of species names.
