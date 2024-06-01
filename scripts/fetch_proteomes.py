@@ -145,12 +145,6 @@ def fetch_proteome_ncbi(proteome_id,taxon,names, output_directory):
     return None
 
 
-
-
-#TODO
-## !!! function, which delete proteomes and updates taxon_lbrary.csv
-
-
 """
 Searches for the proteome of a species in UniProt and returns the ID.
 """
@@ -346,7 +340,11 @@ def main():
     if not os.path.exists("proteome_database/"):
         os.system("mkdir -p proteome_database")
         print(f"preparing database directory: ./proteome_database")
-
+        
+    if not os.path.exists("working_dir/"):
+        os.system("mkdir -p working_dir")
+        print(f"preparing working directory: ./working_dir")
+        
     if not os.path.isfile(f"proteome_database/{taxon_library}"):
         os.system(f"echo -n '' > proteome_database/{taxon_library}")
         print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: ./proteome_database/{taxon_library}")
