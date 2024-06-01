@@ -4,7 +4,7 @@ import requests
 import subprocess
 import json
 import re
-from fetch_proteoms import clasify_id, search_proteome_uniprot, search_proteome_ncbi, check_taxon
+from fetch_proteomes import clasify_id, search_proteome_uniprot, search_proteome_ncbi, check_taxon
 
 taxon_library="taxon_library.csv"
 
