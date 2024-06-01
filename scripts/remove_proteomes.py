@@ -17,8 +17,8 @@ def parse_args():
     parser.add_argument('input',metavar= 'i',nargs=1, help="""Path to the input TXT file containing 
         species names or organism IDs""")
     parser.add_argument('-l',metavar= 'l',nargs=1, help=f"""Path to the itaxon_library.csv containing 
-        informations about downloaded proteomes. Default = ./proteom_database/{taxon_library}""",
-        default=f"./proteom_database/{taxon_library}")
+        informations about downloaded proteomes. Default = ./proteome_database/{taxon_library}""",
+        default=f"./proteome_database/{taxon_library}")
 
 
     args = parser.parse_args()
@@ -34,9 +34,9 @@ def parse_args():
         if os.path.isfile(args.l[0]):
             library=args.l[0]
         else:
-            library=f"./proteom_database/{taxon_library}"
+            library=f"./proteome_database/{taxon_library}"
     else:
-        library=f"./proteom_database/{taxon_library}"
+        library=f"./proteome_database/{taxon_library}"
     if in_file:    
         return [in_file,library]
     else:
@@ -53,7 +53,7 @@ def delete_path(paths,library):
         os.system(f"rm {library}.tmp")
         result=result.split()[-1].strip()
         print(f">>> removing file {result}\nDONE!")
-        os.system(f"rm {path}")
+        os.system(f"rm {paths}")
         return False
     return True
 
@@ -100,8 +100,6 @@ def delete_ids(input_txt,library):
 
 def main():
     inputs=parse_args()
-    if not os.path.isfile(f"proteom_database/{taxon_library}"):
-        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: ./proteom_database/{taxon_library}")
 
     if not inputs is None:
         print(f"{' '*13}> Remove proteomes < \n\n{'#'*20}START{'#'*20}")
