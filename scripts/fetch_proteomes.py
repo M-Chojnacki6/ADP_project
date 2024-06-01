@@ -355,9 +355,9 @@ def main():
         print(f"{' '*13}> Fetch proteomes < \n\n{'#'*20}START{'#'*20}")
         print(f"\nInput file:\t\t\t{inputs[0]}\nOutput directory:\t\t{inputs[1]}\n")
         paths=process_by_name(inputs[0], inputs[1])
-        for p in paths:
-            print(p)
-        return paths
+        with open(f"{inputs[0]}.paths","w") as f:
+            for p in paths:
+                f.write(f"{p}\n")
 
 if __name__ == "__main__":
     main()
