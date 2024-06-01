@@ -41,15 +41,17 @@ def parse_args():
 
 def process_paths(paths):
     paths_list=[]
-    out_file=re.sub("[.]txt[.]","_merged.",re.sub("[.]paths$",".fasta.gz",paths))  # potentialy problematic line
+    nr=0
     with open(paths,"r") as f:
         for line in f:
             line=os.path.normpath(line.strip())
             if os.path.isfile(line):
                 paths_list.append(line.strip())
+                nr+=1
             else:
                 print(f"! proteome on path: {line} not found;\nomitting proteome\nuse update_database.py to remove all maualy relocated/deleted proteome files.")
                 paths_list.append("")
+    out_file=re.sub("[.]txt[.]",f"_merged{nr}.",re.sub("[.]paths$",".fasta.gz",paths))  # potentialy problematic line
     if os.path.isfile(out_file):
         os.system(f"rm {out_file}")
     with gzip.open(out_file,"wt") as f:
