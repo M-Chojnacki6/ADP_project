@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('input',metavar= 'i',nargs=1, help="""Path to the input TXT file containing 
         species names or organism IDs""")
     parser.add_argument('-o',metavar= 'o',nargs=1, help="""Directory where the proteome files will be saved;
-         if not provided, save to ./proteom_database/""",default="./proteom_database/")
+         if not provided, save to ./proteome_database/""",default="./proteome_database/")
 
     args = parser.parse_args()
     in_file=""
@@ -50,7 +50,7 @@ def parse_args():
                 out_dir=f"{out_dir}/"
             out_dir=out_dir.replace("//","/")
         else:
-            out_dir="./proteom_database/"
+            out_dir="./proteome_database/"
     else:
         out_dir=args.o
     if in_file:    
@@ -68,7 +68,7 @@ Homo sapiens                          \t 9606   \t UP000005640                \t
 """
 
 def check_taxon(name):
-    with open(f"./proteom_database/{taxon_library}","r") as f:
+    with open(f"./proteome_database/{taxon_library}","r") as f:
         for line in f:
             line=line.strip().split("\t")
             if line[0].lower() ==str(name).lower() or line[0].lower().split("(")[0].strip() ==str(name).lower():
@@ -91,20 +91,20 @@ def get_data_from_json_NCBI(results):
     names=[results["organism"]['organism_name']]
     if 'common_name' in results["organism"].keys():
         names.append(results["organism"]['common_name'])
-    print(f"NCBI ID: {NCBIid}\ntaksonomy ID: {taxon}\nnames: {names}")
+    print(f"NCBI ID: {NCBIid}\ntaxonomy ID: {taxon}\nnames: {names}")
     return [NCBIid,taxon,names]
 
 def search_proteome_ncbi(species_name,id_type):
     output=None
     if id_type==3: 
-        result = subprocess.run([f"./datasets", "summary" , "genome" , "accession",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
+        result = subprocess.run([f"datasets", "summary" , "genome" , "accession",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
             stdout=subprocess.PIPE)
         if result.returncode==0:
             output = get_data_from_json_NCBI(result.stdout)
         else:
             print(f"NCBI accession {species_name} not found in NCBI database")
     elif id_type==0 or id_type==1:
-        result = subprocess.run([f"./datasets", "summary" , "genome" , "taxon",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
+        result = subprocess.run([f"datasets", "summary" , "genome" , "taxon",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
             stdout=subprocess.PIPE)
         if result.returncode==0:
             output = get_data_from_json_NCBI(result.stdout)
@@ -114,12 +114,12 @@ def search_proteome_ncbi(species_name,id_type):
             else:
                 print(f"Taxom id: {species_name} not found in NCBI database")
     else:
-        result = subprocess.run([f"./datasets", "summary" , "genome" , "accession",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
+        result = subprocess.run([f"datasets", "summary" , "genome" , "accession",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
             stdout=subprocess.PIPE)
         if result.returncode==0:
             output = get_data_from_json_NCBI(result.stdout)
         else:
-            result = subprocess.run([f"./datasets", "summary" , "genome" , "taxon",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
+            result = subprocess.run([f"datasets", "summary" , "genome" , "taxon",f"{species_name}", "--limit", "1", "--as-json-lines" ], # 
                 stdout=subprocess.PIPE)
             if result.returncode==0:
                 output = get_data_from_json_NCBI(result.stdout)
@@ -128,7 +128,7 @@ def search_proteome_ncbi(species_name,id_type):
     return output
 
 def fetch_proteome_ncbi(proteome_id,taxon,names, output_directory):
-    result = subprocess.run([f"./datasets", "download" , "genome" , "accession",f"{proteome_id}", "--filename",
+    result = subprocess.run([f"datasets", "download" , "genome" , "accession",f"{proteome_id}", "--filename",
      f"{output_directory}tmp.zip", "--include", "protein" ], stdout=subprocess.PIPE)
     if result.returncode==0:
         os.system(f"unzip {output_directory}tmp.zip -d {output_directory}tmp")
@@ -162,7 +162,7 @@ def get_data_from_json_UniProt(response):
         names.append(response["taxonomy"]["commonName"])
     if "synonyms" in response["taxonomy"].keys():
         names+=response["taxonomy"]["synonyms"]
-    print(f"UniProt ID: {UPid}\ntaksonomy ID: {taxon}\nnames: {names}")
+    print(f"UniProt ID: {UPid}\ntaxonomy ID: {taxon}\nnames: {names}")
     return [UPid,taxon,names]
 
 
@@ -342,20 +342,14 @@ def process_by_name(input_txt, output_directory):
 
 def main():
     inputs=parse_args()
-    if not os.path.exists("datasets"):
 
-        # it should be version with conda !
+    if not os.path.exists("proteome_database/"):
+        os.system("mkdir -p proteome_database")
+        print(f"preparing database directory: ./proteome_database")
 
-        os.system("curl -o datasets 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/datasets'")
-        os.system("chmod +x datasets")
-        print(f"preparing  NCBI browser: ./datasets")
-    if not os.path.exists("proteom_database/"):
-        os.system("mkdir proteom_database")
-        print(f"preparing database directory: ./proteom_database")
-
-    if not os.path.isfile(f"proteom_database/{taxon_library}"):
-        os.system(f"echo -n '' > proteom_database/{taxon_library}")
-        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: ./proteom_database/{taxon_library}")
+    if not os.path.isfile(f"proteome_database/{taxon_library}"):
+        os.system(f"echo -n '' > proteome_database/{taxon_library}")
+        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: ./proteome_database/{taxon_library}")
 
     if not inputs is None:
         print(f"{' '*13}> Fetch proteomes < \n\n{'#'*20}START{'#'*20}")
