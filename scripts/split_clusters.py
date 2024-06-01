@@ -68,7 +68,6 @@ def process_clusters(clusters,output_dir,cutoff):
         go=False
         for line in clust_file:
             if line[0]==">" and len(line.strip().split())==1:
-                print(f"list_npID ={list_npID}\nlist_paID={list_pID}" )
                 if len(list_npID)>=cutoff:
                     
                     f=open(f"{output_dir}/nonpara/np_{p}_{len(list_npID)}.fasta","w")
