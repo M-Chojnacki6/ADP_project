@@ -8,6 +8,7 @@ dependencies:
   - ncbi-datasets-cli
   - muscle
   - mmseqs2
+  - mafft
   - pip
   - pip:
       - pandas
