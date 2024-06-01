@@ -357,6 +357,7 @@ def main():
         paths=process_by_name(inputs[0], inputs[1])
         with open(f"{inputs[0]}.paths","w") as f:
             for p in paths:
+                print(p)
                 f.write(f"{p}\n")
 
 if __name__ == "__main__":
