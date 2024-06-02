@@ -31,8 +31,8 @@ def parse_args():
     else:
         in_file=args.input[0]
         if not re.search(".+[.]paths$",in_file):
-        	print(f"Input file {in_file} not recognized as correct .paths file.")
-        	in_file=""
+            print(f"Input file {in_file} not recognized as correct .paths file.")
+            in_file=""
 
     if in_file:    
         return[in_file]
@@ -69,7 +69,7 @@ def process_paths(paths):
                             name=re.findall("[A-Z][A-Z]_[0-9]+",name)[0]
                             name=name.split("_")[1]
                             record.id=f"{i}g{name.replace(',','')}"
-                        elif re.search("^[st][pr][|][\w]+",name):
+                        elif re.search("^[st][pr][|][\w]+",name): ## problematic line '\w' an escpae character, consider using raw string r"..."
                             name=re.findall("^[st][pr][|][\w]+",name)[0]
                             record.id=f"{i}g{name.split('|')[1]}"
                         else:

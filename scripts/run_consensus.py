@@ -1,56 +1,49 @@
 #!/usr/bin/env python3
 
-"""
-Script Name: run_consensus.py
+import os
+import dendropy
+import argparse
 
-Version: 4
+# Function to read taxa from list.txt
+def read_taxa_list(filename):
+    with open(filename, 'r') as file:
+        taxa_list = [line.strip() for line in file.readlines()]
+    return taxa_list
 
-Description:
-Construct a consensus tree based on unrooted gene trees
 
-Usage:
-    python run_consensus.py TBD
+# Function to replace leaves with taxa names in DendroPy tree
+def replace_leaves(tree, taxa_list):
+    for leaf in tree.leaf_nodes():
+        leaf.taxon.label = taxa_list[int(leaf.taxon.label)]
+    return tree
 
-"""
+# Main function
+def main(folder, taxa_filename, min_freq):
+    cons_tree = folder + '/CONSENSUS.tree'
+    tree_list = dendropy.TreeList()
+    taxa_list = read_taxa_list(taxa_filename)
 
-from dendropy import TaxonNamespace, TreeList
+    for filename in os.listdir(folder):
+        if filename.endswith('.nwk') or filename.endswith('.newick'):
+            tree_path = os.path.join(folder, filename)
+            tree = dendropy.Tree.get(path=tree_path, schema='newick')
+            tree = replace_leaves(tree, taxa_list)
+            tree_list.append(tree)
 
-def run_consensus():
-    # Initialize a TreeList object
-    # Select trees that have a full set of taxa as leaves
-    tlist = TreeList.get(path="trees_np.txt",
-            schema="newick",
-            rooting="default-unrooted",
-            taxon_namespace=TaxonNamespace(aliases))
+    # Generate consensus tree
+    consensus_tree = tree_list.consensus(min_freq=min_freq, is_bipartitions_updated=True)
 
-    with open("trees_cnp.txt", "w") as f:
-        pass
+    # Save the consensus tree to the output file
+    consensus_tree.write(path=cons_tree, schema='newick')
 
-    # All trees used to make consensus require to have the same set of taxa
-    desired_num_leaves = len(aliases)
 
-    # Open the output file in append mode
-    with open("trees_cnp.txt", "a") as outfile:
-        # Iterate through trees in the TreeList
-        for tree in tlist:
-            # Check the number of leaves
-            num_leaves = len(tree.leaf_nodes())
-
-            # If the number of leaves is equal to 23, append to the new file
-            if num_leaves == desired_num_leaves:
-                outfile.write(tree.as_string(schema="newick"))
-
-    # Read selected trees
-    tlist = TreeList.get(path="trees_cnp.txt",
-            schema="newick",
-            rooting="default-unrooted",
-            taxon_namespace=TaxonNamespace(aliases))
-    
 if __name__ == "__main__":
-    # Needed at input:
-    # path to file with gene trees (one tree per line in newick format)
-    # aliases - list of unique aliases for 
-    # example:
-    aliases = ["ECOL", "HSAP"]
+    parser = argparse.ArgumentParser(description='Consensus tree calculator')
+    parser.add_argument('folder', type=str, help='Folder containing tree files .nwk')
+    parser.add_argument('taxa_list', type=str, help='Text file with a list of taxa to replace the numbers')
+    parser.add_argument('min_freq', type=float, help='Minimum frequency of splits to be considered in the consensus tree')
 
-    run_consensus()
+    args = parser.parse_args()
+    
+    main(args.folder, args.taxa_list, args.min_freq)
+
