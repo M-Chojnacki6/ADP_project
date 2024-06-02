@@ -31,8 +31,8 @@ def parse_args():
     else:
         in_file=args.input[0]
         if not re.search(".+[.]paths$",in_file):
-        	print(f"Input file {in_file} not recognized as correct .paths file.")
-        	in_file=""
+            print(f"Input file {in_file} not recognized as correct .paths file.")
+            in_file=""
 
     if in_file:    
         return[in_file]
