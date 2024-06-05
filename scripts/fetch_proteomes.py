@@ -133,16 +133,16 @@ def search_proteome_ncbi(species_name,id_type):
 
 def fetch_proteome_ncbi(proteome_id,taxon,names, output_directory):
     result = subprocess.run([f"datasets", "download" , "genome" , "accession",f"{proteome_id}", "--filename",
-     f"{output_directory}tmp.zip", "--include", "protein" ], stdout=subprocess.PIPE)
+     f"{output_directory}/tmp.zip", "--include", "protein" ], stdout=subprocess.PIPE)
     if result.returncode==0:
-        os.system(f"unzip {output_directory}tmp.zip -d {output_directory}tmp")
-        os.system(f"mv {output_directory}tmp/ncbi_dataset/data/{proteome_id}/protein.faa {output_directory}/{proteome_id.replace('.','_')}.fasta")
-        os.system(f"gzip {output_directory}{proteome_id.replace('.','_')}.fasta")
-        os.system(f"rm -r {output_directory}tmp")
-        os.system(f"rm {output_directory}tmp.zip")
+        os.system(f"unzip {output_directory}/tmp.zip -d {output_directory}/tmp")
+        os.system(f"mv {output_directory}/tmp/ncbi_dataset/data/{proteome_id}/protein.faa {output_directory}/{proteome_id.replace('.','_')}.fasta")
+        os.system(f"gzip {output_directory}/{proteome_id.replace('.','_')}.fasta")
+        os.system(f"rm -r {output_directory}/tmp")
+        os.system(f"rm {output_directory}/tmp.zip")
         for name in names:
             print(f"Updating library file with name '{name}'")
-            os.system(f"""echo "{name}\t{taxon}\t{proteome_id}\t{output_directory}{proteome_id.replace('.','_')}.fasta.gz" >> {output_directory}{taxon_library}""")
+            os.system(f"""echo "{name}\t{taxon}\t{proteome_id}\t{output_directory}/{proteome_id.replace('.','_')}.fasta.gz" >> {output_directory}/{taxon_library}""")
         return proteome_id.replace('.','_')
     else:
         print(f"NCBI accession {proteome_id} not found in NCBI database")
