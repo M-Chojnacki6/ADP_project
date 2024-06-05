@@ -12,7 +12,7 @@ function display_help() {
     echo "ECT - Easy Consensus Tree"
     echo "by Mateusz Chojnacki, Krzysztof Łukasz, Younginn Park, Daniel Zalewski"
     echo ""
-    echo "A streamlined tool for reconstructing genome-based phylogenetic trees."
+    echo "A streamlined tool for reconstructing phylogenetic trees using whole-proteome approach."
     echo ""
     echo "Usage: $0 [options]"
     echo "Options:"
@@ -31,9 +31,21 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+log_file="log.txt"
+echo "" > $log_file
+
 # Function to print timestamped messages
 function log_message() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
+    local message="$1"
+    local log_file="$2"
+    local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    local log_entry="$timestamp - $message"
+
+    echo "$log_entry"
+
+    if [[ -n "$log_file" ]]; then
+        echo "$log_entry" >> "$log_file"
+    fi
 }
 
 # Activate the conda environment
