@@ -139,5 +139,9 @@ log_message "Constructing consensus tree..."
 # ?TODO?
 
 
+# if [[ $? -ne 0 ]]; then
+#     log_message "Error: Visualizing consensus tree failed. Exiting."
+#     exit 1
+# fi
 
-log_message "All completed successfully."
+log_message "All finished"
