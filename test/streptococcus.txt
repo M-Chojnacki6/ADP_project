@@ -1,0 +1,4 @@
+Streptococcus ratti
+Streptococcus pyogenes
+Streptococcus pneumoniae
+Lactococcus lactis
