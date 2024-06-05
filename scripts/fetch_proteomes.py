@@ -22,6 +22,10 @@ import re
 
 taxon_library="taxon_library.csv"
 
+# Define default output dir - project_dir/proteome_database
+script_dir = os.path.dirname(os.path.realpath(__file__))
+project_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
+default_output_dir = os.path.join(project_dir, 'proteome_database')
 
 
 def parse_args():
@@ -30,8 +34,8 @@ def parse_args():
 
     parser.add_argument('input',metavar= 'i',nargs=1, help="""Path to the input TXT file containing 
         species names or organism IDs""")
-    parser.add_argument('-o',metavar= 'o',nargs=1, help="""Directory where the proteome files will be saved;
-         if not provided, save to ./proteome_database/""",default="./proteome_database/")
+    parser.add_argument('-o',metavar= 'o',nargs=1, help=f"""Directory where the proteome files will be saved;
+         if not provided, save to {default_output_dir}""",default=default_output_dir)
 
     args = parser.parse_args()
     in_file=""
@@ -50,7 +54,7 @@ def parse_args():
                 out_dir=f"{out_dir}/"
             out_dir=out_dir.replace("//","/")
         else:
-            out_dir="./proteome_database/"
+            out_dir=default_output_dir
     else:
         out_dir=args.o
     if in_file:    
@@ -68,7 +72,7 @@ Homo sapiens                          \t 9606   \t UP000005640                \t
 """
 
 def check_taxon(name):
-    with open(f"./proteome_database/{taxon_library}","r") as f:
+    with open(os.path.join(default_output_dir, taxon_library), "r") as f:
         for line in f:
             line=line.strip().split("\t")
             if line[0].lower() ==str(name).lower() or line[0].lower().split("(")[0].strip() ==str(name).lower():
@@ -337,17 +341,17 @@ def process_by_name(input_txt, output_directory):
 def main():
     inputs=parse_args()
 
-    if not os.path.exists("proteome_database/"):
-        os.system("mkdir -p proteome_database")
-        print(f"preparing database directory: ./proteome_database")
+    if not os.path.exists(default_output_dir):
+        os.system(f"mkdir -p {default_output_dir}")
+        print(f"preparing database directory: {default_output_dir}")
         
     if not os.path.exists("working_dir/"):
         os.system("mkdir -p working_dir")
         print(f"preparing working directory: ./working_dir")
         
-    if not os.path.isfile(f"proteome_database/{taxon_library}"):
-        os.system(f"echo -n '' > proteome_database/{taxon_library}")
-        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: ./proteome_database/{taxon_library}")
+    if not os.path.isfile(os.path.join(default_output_dir, taxon_library)):
+        os.system(f"echo -n '' > {default_output_dir}/{taxon_library}")
+        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: {default_output_dir}/{taxon_library}")
 
     if not inputs is None:
         print(f"{' '*13}> Fetch proteomes < \n\n{'#'*20}START{'#'*20}")
