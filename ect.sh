@@ -21,7 +21,7 @@ function display_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  -h, --help     Show this help message"
-    echo "  -i, --input    Set value for option1 (default: species.txt)"
+    echo "  -i, --input    Text file with species names or taxonomy id in lines (default: species.txt)"
     exit 0
 }
 
