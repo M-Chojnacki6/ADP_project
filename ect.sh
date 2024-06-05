@@ -40,7 +40,6 @@ echo "" > $log_file
 # Function to print timestamped messages
 function log_message() {
     local message="$1"
-    local log_file="$2"
     local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
     local log_entry="$timestamp - $message"
 
