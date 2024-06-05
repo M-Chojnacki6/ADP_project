@@ -45,10 +45,7 @@ function log_message() {
     local log_entry="$timestamp - $message"
 
     echo "$log_entry"
-
-    if [[ -n "$log_file" ]]; then
-        echo "$log_entry" >> "$log_file"
-    fi
+    echo "$log_entry" >> "$log_file"
 }
 
 log_message "Starting Easy Consensus Tree"
