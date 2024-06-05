@@ -135,14 +135,13 @@ run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py -mode 2 $CURRENT_DIR/$MERGE
 #######################################
 # Construction of gene family trees
 #######################################
-log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
+log_message "Constructing trees for gene families in folder $CURRE$MERGED_PREFIX/nonpara/*.aln..."
 # in: aln files (see below)
 # out: nwk files in nonpara folder
 
 # the script processes only one file at a time with no wrapper
 shopt -s nullglob
-for file in "$CURRENT_DIR/$MERGED_PREFIX/*.aln"
-do
+for file in $CURRENT_DIR/$MERGED_PREFIX/*aln; do
     run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
 done
 
