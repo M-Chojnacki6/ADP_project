@@ -119,7 +119,7 @@ log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
 # in:  ...all_seqs.fasta
 # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR
 
-python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta | tee -a $log_file
+python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta | tee -a $log_file
 
 if [[ $? -ne 0 ]]; then
     log_message "Error: Cluster filtering failed. Exiting."
@@ -130,9 +130,10 @@ log_message "Cluster filtering completed successfully."
 #######################################
 # Run MSA
 #######################################
-log_message "Running MSA..."
+log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
 # in: path to np.txt from filtering
 # out: aln files in nonpara folder
+
 
 #######################################
 # Construction of gene family trees
