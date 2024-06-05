@@ -7,7 +7,7 @@
 
 # Define absolute paths
 THIS_SCRIPT_PATH=$(realpath "$0")
-PROJECT_DIR=$(dirname "$SCRIPT") # ECT
+PROJECT_DIR=$(dirname $THIS_SCRIPT_PATH) # ECT
 CURRENT_DIR=$(pwd) # wherever the user is
 
 SPECIES_LIST=$CURRENT_DIR/species.txt
