@@ -78,12 +78,19 @@ log_message "Fetch completed successfully."
 # Merge proteomes
 #######################################
 log_message "Merging proteomes..."
+python3 scripts/merge_proteomes.py $SPECIES_LIST.paths | tee -a $log_file
+
+if [[ $? -ne 0 ]]; then
+    log_message "Error: Merging proteomes failed. Exiting."
+    exit 1
+fi
+log_message "Merge completed successfully."
 
 
 #######################################
-# Clustering with MMseqs2
+# Sequence clustering
 #######################################
-log_message "Running MMseqs2..."
+log_message "Clustering sequences..."
 
 
 
