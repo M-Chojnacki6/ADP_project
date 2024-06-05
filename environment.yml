@@ -6,9 +6,10 @@ channels:
 dependencies:
   - python=3.10
   - ncbi-datasets-cli
-  - muscle
-  - mmseqs2
   - mafft
+  - muscle
+  - clustalw
+  - mmseqs2
   - pip
   - pip:
       - pandas
