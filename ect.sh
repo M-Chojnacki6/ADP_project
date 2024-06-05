@@ -141,7 +141,7 @@ log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpa
 
 # the script processes only one file at a time with no wrapper
 # shopt -s nullglob
-for file in $CURRENT_DIR/$MERGED_PREFIX/*aln; do
+for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
     run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
 done
 
