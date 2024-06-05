@@ -6,18 +6,18 @@
 #######################################
 
 # Default values for options
-OPTION1="default_value1"
+SPECIES_LIST="species.txt"
 
 function display_help() {
     echo "ECT - Easy Consensus Tree"
     echo "by Mateusz Chojnacki, Krzysztof Łukasz, Younginn Park, Daniel Zalewski"
     echo ""
-    echo "A streamlined tool for reconstructing genome-based phylogenetic trees."
+    echo "A streamlined tool for reconstructing phylogenetic trees using whole-proteome approach."
     echo ""
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  -h, --help        Show this help message"
-    echo "  -o1, --option1    Set value for option1 (default: $OPTION1)"
+    echo "  -i, --input    Set value for option1 (default: $SPECIES_LIST)"
     exit 0
 }
 
@@ -25,16 +25,34 @@ function display_help() {
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) display_help ;;
-        -o1|--option1) OPTION1="$2"; shift ;;
+        -i|--input) SPECIES_LIST="$2"; shift ;;
+        # add other options here
+        # don't forget to add to usage and help too
         *) echo "Unknown parameter passed: $1"; display_help ;;
     esac
     shift
 done
 
+# Initialize log file
+log_file="log.txt"
+echo "" > $log_file
+
 # Function to print timestamped messages
 function log_message() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
+    local message="$1"
+    local timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    local log_entry="$timestamp - $message"
+
+    echo "$log_entry"
+    echo "$log_entry" >> "$log_file"
 }
+
+log_message "Starting Easy Consensus Tree"
+
+if [ ! -f $SPECIES_LIST ]; then
+    log_message "File $SPECIES_LIST not found"
+    exit 1
+fi
 
 # Activate the conda environment
 CONDA_ENV="ect_env"
@@ -46,43 +64,58 @@ conda activate $CONDA_ENV
 #######################################
 # Fetch proteomes
 #######################################
-log_message "Running $SCRIPT with options: $OPTION1"
-python scripts/fetch_proteomes.py $OPTION1
+log_message "Fetching proteomes from $SPECIES_LIST..."
+python3 scripts/fetch_proteomes.py $SPECIES_LIST | tee -a $log_file
+
 if [[ $? -ne 0 ]]; then
-    log_message "Error: $SCRIPT failed. Exiting."
+    log_message "Error: Fetching proteomes failed. Exiting."
     exit 1
 fi
-log_message "$SCRIPT completed successfully."
+log_message "Fetch completed successfully."
 
 
 #######################################
-# Clustering with MMseqs2
+# Merge proteomes
 #######################################
-log_message "Running MMseqs2 with min-seq-id: $MINSEQID"
-scripts/run_mmseqs.sh $FASTA $MINSEQID
+log_message "Merging proteomes..."
+python3 scripts/merge_proteomes.py $SPECIES_LIST.paths | tee -a $log_file
+
 if [[ $? -ne 0 ]]; then
-    log_message "Error: MMseqs2 failed. Exiting."
+    log_message "Error: Merging proteomes failed. Exiting."
     exit 1
 fi
-log_message "Clustering completed successfully."
+log_message "Merge completed successfully."
+
+
+#######################################
+# Sequence clustering
+#######################################
+log_message "Clustering sequences..."
+
 
 
 #######################################
 # Filter clusters
 #######################################
+log_message "Filtering clusters..."
 
+
+#######################################
+# Run MSA
+#######################################
+log_message "Running MSA..."
 
 
 #######################################
 # Construction of gene family trees
 #######################################
-
+log_message "Constructing trees for gene families..."
 
 
 #######################################
 # Construction of consensus tree
 #######################################
-
+log_message "Constructing consensus tree..."
 
 
 #######################################
