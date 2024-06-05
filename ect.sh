@@ -135,7 +135,7 @@ log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
 # in: path to np.txt from filtering
 # out: aln files in merged-prefix/nonpara folder
 
-python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt | tee -a $log_file
+python3 $PROJECT_DIR/scripts/run_MSA.py -mode 0 $CURRENT_DIR/$MERGED_PREFIX/np.txt | tee -a $log_file
 
 if [[ $? -ne 0 ]]; then
     log_message "Error: MSA failed. Exiting."
