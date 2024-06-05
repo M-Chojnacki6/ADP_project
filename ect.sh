@@ -135,7 +135,7 @@ log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
 # in: path to np.txt from filtering
 # out: aln files in merged-prefix/nonpara folder
 
-python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/${MERGED_PREFIX}/np.txt | tee -a $log_file
+python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt | tee -a $log_file
 
 if [[ $? -ne 0 ]]; then
     log_message "Error: MSA failed. Exiting."
@@ -146,12 +146,21 @@ log_message "MSA completed successfully."
 #######################################
 # Construction of gene family trees
 #######################################
-log_message "Constructing trees for gene families..."
+log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
 # in: aln files (see below)
 # out: nwk files in nonpara folder
 
 # the script processes only one file at a time with no wrapper
-# for file in dir/nonpara/*.aln; do python3 run_NJ.py $file | tee -a $log_file; done
+for file in dir/nonpara/*.aln
+do
+    python3 run_NJ_on_alignment.py $file | tee -a $log_file
+    if [[ $? -ne 0 ]]; then
+        log_message "Error: Tree construction for $file failed. Exiting."
+        exit 1
+    fi
+done
+
+log_message "Gene family tree construction completed successfully."
 
 
 #######################################
