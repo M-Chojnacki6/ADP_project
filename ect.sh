@@ -142,7 +142,7 @@ log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpa
 # the script processes only one file at a time with no wrapper
 for file in dir/nonpara/*.aln
 do
-    run_and_log "python3 run_NJ_on_alignment.py $file" "Tree construction"
+    run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
 done
 
 log_message "Gene family tree construction completed successfully."
