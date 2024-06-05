@@ -10,7 +10,7 @@ def parse_args():
 
     parser.add_argument('input',metavar= 'i',nargs=1, help="""Path to the input .fasta.gz file containing merged proteomes""")
     parser.add_argument('-msi',metavar= 'FLOAT',nargs=1,
-        help="""List matches above this sequence identity (range 0.0-1.0); default 0""",default=0)
+        help="""List matches above this sequence identity (range 0.0-1.0); default 0.3""",default=0.3)
 
     parser.add_argument('-clusterMode',metavar='INT',type=int,nargs=1,choices=[0,1,2,3],help="""Clustering mode:\n0: Set-Cover (greedy)
 1: Connected component (BLASTclust)
