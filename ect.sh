@@ -117,6 +117,7 @@ log_message "Clustering completed successfully."
 #######################################
 log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
 # in:  ...all_seqs.fasta
+# option: -c (cutoff for min number of species in a nonpara cluster)
 # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR
 
 python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta | tee -a $log_file
