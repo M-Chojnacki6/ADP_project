@@ -249,7 +249,8 @@ def clasify_id(name):
 def DownloadFile(url,directory):
     local_filename = url.split('/')[-1]
     r = requests.get(url)
-    f = open(f"{directory}{local_filename}", 'wb')
+    download_path = os.path.join(directory, local_filename)
+    f = open(download_path, 'wb')
     for chunk in r.iter_content(chunk_size=512 * 1024): 
         if chunk:
             f.write(chunk)
