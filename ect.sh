@@ -166,10 +166,18 @@ log_message "Gene family tree construction completed successfully."
 #######################################
 # Construction of consensus tree
 #######################################
-log_message "Constructing consensus tree..."
+log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
 # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
 # out: CONSENSUS.tree file in nonpara folder
 
+python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara | tee -a $log_file
+
+if [[ $? -ne 0 ]]; then
+    log_message "Error: Consensus tree construction failed. Exiting."
+    exit 1
+fi
+log_message "Consensus tree constructed successfully."
+log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
 
 #######################################
 # Tree visualization
