@@ -8,7 +8,7 @@
 # Define absolute paths
 THIS_SCRIPT_PATH=$(realpath "$0")
 PROJECT_DIR=$(dirname $THIS_SCRIPT_PATH) # ECT
-CURRENT_DIR=$(pwd) # wherever the user is
+CURRENT_DIR=$(pwd) # wherever the user is, safety valve
 
 SPECIES_LIST=$CURRENT_DIR/species.txt
 
@@ -95,37 +95,48 @@ log_message "Merge completed successfully."
 # Sequence clustering
 #######################################
 log_message "Clustering sequences..."
-
+# in: path to merged fasta.gz (problem: ambiguous name - this keeps being a problem down the line)
+# options: msi, clustermode, covmode, c
+# out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
 
 
 #######################################
 # Filter clusters
 #######################################
 log_message "Filtering clusters..."
-
+# in:  ...all_seqs.fasta
+# out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR
 
 #######################################
 # Run MSA
 #######################################
 log_message "Running MSA..."
-
+# in: path to np.txt from filtering
+# out: aln files in nonpara folder
 
 #######################################
 # Construction of gene family trees
 #######################################
 log_message "Constructing trees for gene families..."
+# in: aln files (see below)
+# out: nwk files in nonpara folder
+
+# the script processes only one file at a time with no wrapper
+# for file in dir/nonpara/*.aln; do python3 run_NJ.py $file | tee -a $log_file; done
 
 
 #######################################
 # Construction of consensus tree
 #######################################
 log_message "Constructing consensus tree..."
+# in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
+# out: CONSENSUS.tree file in nonpara folder
 
 
 #######################################
 # Tree visualization
 #######################################
-
+# ?TODO?
 
 
 
