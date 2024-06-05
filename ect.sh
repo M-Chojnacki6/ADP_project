@@ -115,9 +115,17 @@ log_message "Clustering completed successfully."
 #######################################
 # Filter clusters
 #######################################
-log_message "Filtering clusters..."
+log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
 # in:  ...all_seqs.fasta
 # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR
+
+python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta | tee -a $log_file
+
+if [[ $? -ne 0 ]]; then
+    log_message "Error: Cluster filtering failed. Exiting."
+    exit 1
+fi
+log_message "Cluster filtering completed successfully."
 
 #######################################
 # Run MSA
