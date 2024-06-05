@@ -38,6 +38,8 @@ conda env create -f environment.yml
 # mamba env create -f environment.yml # faster
 ```
 
+## Usage
+
 ## TO-DO list
 Our main goal is to create a tool for an easy construction of a consensus tree based on a user-defined list of species names.
 
@@ -50,8 +52,9 @@ Our main goal is to create a tool for an easy construction of a consensus tree b
   - [x] Construction of consensus tree based on cluster trees with DendroPy/... (**Output: newick file**)
 - [x] Prepare environment setup for the user (`.yml` file) with [mafft](https://anaconda.org/bioconda/mafft), specific python version (e.g. 3.10) and python packages (biopython, pandas, dendropy, numpy, entrez...), for this having a miniforge3 (mamba, recommended) or conda should be a requirement for the user (add to documentation)
 - [ ] Prepare complete documentation for user
-- [ ] Prepare full pipeline
+- [ ] Prepare pipeline in the main bash script
 - [ ] Prepare options in the pipeline
+- [ ] Visualize the final tree
 
 Benchmarking
 - Compare results from our tool and known phylogenetic trees
