@@ -65,7 +65,7 @@ conda activate $CONDA_ENV
 # Fetch proteomes
 #######################################
 log_message "Fetching proteomes from $SPECIES_LIST..."
-python3 scripts/fetch_proteomes.py $SPECIES_LIST
+python3 scripts/fetch_proteomes.py $SPECIES_LIST | tee -a $log_file
 
 if [[ $? -ne 0 ]]; then
     log_message "Error: Fetching proteomes failed. Exiting."
@@ -90,24 +90,25 @@ log_message "Running MMseqs2..."
 #######################################
 # Filter clusters
 #######################################
+log_message "Filtering clusters..."
 
 
 #######################################
 # Run MSA
 #######################################
-
+log_message "Running MSA..."
 
 
 #######################################
 # Construction of gene family trees
 #######################################
-
+log_message "Constructing trees for gene families..."
 
 
 #######################################
 # Construction of consensus tree
 #######################################
-
+log_message "Constructing consensus tree..."
 
 
 #######################################
