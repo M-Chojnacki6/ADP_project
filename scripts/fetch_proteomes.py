@@ -9,7 +9,7 @@ Description:
 Script for fetching proteomes from Uniprot or NCBI database.
 
 Usage:
-    python fetch_proteomes.py <-i species_list> [-o output_directory]
+    python fetch_proteomes.py [-o output_directory] species_list
 
 """
 
@@ -20,12 +20,13 @@ import subprocess
 import json
 import re
 
-taxon_library="taxon_library.csv"
-
 # Define default output dir - project_dir/proteome_database
 script_dir = os.path.dirname(os.path.realpath(__file__))
 project_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 default_output_dir = os.path.join(project_dir, 'proteome_database')
+# default_output_dir += "/" # use os.path.join pls
+
+taxon_library=os.path.join("taxon_library.csv")
 
 
 def parse_args():
@@ -35,7 +36,7 @@ def parse_args():
     parser.add_argument('input',metavar= 'i',nargs=1, help="""Path to the input TXT file containing 
         species names or organism IDs""")
     parser.add_argument('-o',metavar= 'o',nargs=1, help=f"""Directory where the proteome files will be saved;
-         if not provided, save to {default_output_dir}""",default=default_output_dir)
+         if not provided, save to {default_output_dir}""", default=default_output_dir)
 
     args = parser.parse_args()
     in_file=""
@@ -131,18 +132,23 @@ def search_proteome_ncbi(species_name,id_type):
                 print(f"name {species_name} not found in NCBI database")
     return output
 
-def fetch_proteome_ncbi(proteome_id,taxon,names, output_directory):
-    result = subprocess.run([f"datasets", "download" , "genome" , "accession",f"{proteome_id}", "--filename",
-     f"{output_directory}/tmp.zip", "--include", "protein" ], stdout=subprocess.PIPE)
-    if result.returncode==0:
-        os.system(f"unzip {output_directory}/tmp.zip -d {output_directory}/tmp")
-        os.system(f"mv {output_directory}/tmp/ncbi_dataset/data/{proteome_id}/protein.faa {output_directory}/{proteome_id.replace('.','_')}.fasta")
-        os.system(f"gzip {output_directory}/{proteome_id.replace('.','_')}.fasta")
-        os.system(f"rm -r {output_directory}/tmp")
-        os.system(f"rm {output_directory}/tmp.zip")
+def fetch_proteome_ncbi(proteome_id, taxon, names, output_directory):
+    tmp_zip = os.path.join(output_directory, "tmp.zip")
+    tmp = tmp_zip = os.path.join(output_directory, "tmp")
+    protein_faa = os.path.join(output_directory, "tmp", "ncbi_dataset", "data", proteome_id, "protein.faa")
+    proteome_id_fasta = os.path.join(output_directory, f"{proteome_id.replace('.','_')}.fasta")
+    taxon_lib = os.path.join(output_directory, taxon_library)
+
+    result = subprocess.run([f"datasets", "download" , "genome" , "accession", f"{proteome_id}", "--filename", tmp_zip, "--include", "protein"], stdout=subprocess.PIPE)
+    if result.returncode == 0:
+        os.system(f"unzip {tmp_zip} -d {tmp}")
+        os.system(f"mv {protein_faa} {proteome_id_fasta}")
+        os.system(f"gzip {proteome_id_fasta}")
+        os.system(f"rm -r {tmp}")
+        os.system(f"rm {tmp_zip}")
         for name in names:
             print(f"Updating library file with name '{name}'")
-            os.system(f"""echo "{name}\t{taxon}\t{proteome_id}\t{output_directory}/{proteome_id.replace('.','_')}.fasta.gz" >> {output_directory}/{taxon_library}""")
+            os.system(f"""echo "{name}\t{taxon}\t{proteome_id}\t{proteome_id_fasta}.gz" >> {taxon_lib}""")
         return proteome_id.replace('.','_')
     else:
         print(f"NCBI accession {proteome_id} not found in NCBI database")
@@ -256,17 +262,19 @@ Function fetch_proteome_uniprot() fetches the proteome data from UniProt and sav
 directory.
 """
 
-def fetch_proteome_uniprot(proteome_id,taxon,names, output_directory):
+def fetch_proteome_uniprot(proteome_id, taxon, names, output_directory):
     domens=["Archaea","Bacteria","Eukaryota","Viruses"]
     for dom in domens:
         url = f"https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/{dom}/{proteome_id}/{proteome_id}_{taxon}.fasta.gz"
         response = requests.get(url)
         if response.status_code == 200:
-            ln = DownloadFile(url,output_directory)
+            ln = DownloadFile(url, output_directory)
 
             for name in names:
-                print(f"actualising libraru file with name '{name}'")
-                os.system(f"echo '{name}\t{taxon}\t{proteome_id}\t{output_directory}{ln}' >> {output_directory}{taxon_library}")
+                print(f"Updating library file with name '{name}'")
+                ln_path = os.path.join(output_directory, ln)
+                taxon_lib = os.path.join(output_directory, taxon_library)
+                os.system(f"echo '{name}\t{taxon}\t{proteome_id}\t{ln_path}' >> {taxon_lib}")
             return ln
 
         elif response.status_code != 200 and dom=="Viruses":
@@ -298,8 +306,9 @@ def process_by_name(input_txt, output_directory):
                         if proteome[3]:
                             ln=fetch_proteome_uniprot(proteome[0],proteome[1],proteome[2], output_directory)
                             if ln:
-                                print(f"Proteome for {species} saved as {output_directory}{ln}")
-                                paths_to_proteomes.append(f"{output_directory}{ln}")
+                                ln_path = os.path.join(output_directory, ln)
+                                print(f"Proteome for {species} saved as {ln_path}")
+                                paths_to_proteomes.append(ln_path)
                                 found=True
                             else:
                                 print(f"No matching proteome found for {species} in UniProt Proteomes")
@@ -325,8 +334,9 @@ def process_by_name(input_txt, output_directory):
                     if check_tmp is None:
                         ln=fetch_proteome_ncbi(proteomeNCBI[0],proteomeNCBI[1],proteomeNCBI[2], output_directory)
                         if ln:
-                            print(f"Proteome for {species} saved as {output_directory}{ln}")
-                            paths_to_proteomes.append(f"{output_directory}{ln}")
+                            ln_path = os.path.join(output_directory, ln)
+                            print(f"Proteome for {species} saved as {ln_path}")
+                            paths_to_proteomes.append(ln_path)
                         else:
                            paths_to_proteomes.append("")
                     else:
@@ -350,8 +360,9 @@ def main():
         print(f"preparing working directory: ./working_dir")
         
     if not os.path.isfile(os.path.join(default_output_dir, taxon_library)):
-        os.system(f"echo -n '' > {default_output_dir}/{taxon_library}")
-        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: {default_output_dir}/{taxon_library}")
+        taxon_lib = os.path.join(default_output_dir, taxon_library)
+        os.system(f"echo -n '' > {taxon_lib}")
+        print(f"preparing library for species names/taxonomy IDs/Uniprot IDs/NCBI IDs: {taxon_lib}")
 
     if not inputs is None:
         print(f"{' '*13}> Fetch proteomes < \n\n{'#'*20}START{'#'*20}")
