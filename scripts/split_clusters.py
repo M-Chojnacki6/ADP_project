@@ -28,8 +28,8 @@ def parse_args():
         [name]_all_seqs.fasta file from mmseq2""", default=None)
     parser.add_argument('-c',metavar='FLOAT',nargs=1,
         help="""float value used to compute cutoff -> minimum number of sequences 
-        in each cluster, should be 0 <= c < 1; default: 0.1""",
-        default=0.1)
+        in each cluster, should be 0 <= c < 1; default: 0.3""",
+        default=0.3)
     args = parser.parse_args()
     in_file=""
     if args.input is None:

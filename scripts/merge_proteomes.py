@@ -51,7 +51,7 @@ def process_paths(paths):
             else:
                 print(f"! proteome on path: {line} not found;\nomitting proteome\nuse update_database.py to remove all maualy relocated/deleted proteome files.")
                 paths_list.append("")
-    out_file=re.sub("[.]txt[.]",f"_merged{nr}.",re.sub("[.]paths$",".fasta.gz",paths))  # potentialy problematic line
+    out_file=re.sub("[.]txt[.]", f"_merged{nr}.", re.sub("[.]paths$", ".fasta.gz", paths))
     if os.path.isfile(out_file):
         os.system(f"rm {out_file}")
     with gzip.open(out_file,"wt") as f:

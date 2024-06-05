@@ -18,10 +18,10 @@ function display_help() {
     echo ""
     echo "A streamlined tool for reconstructing phylogenetic trees using whole-proteome approach."
     echo ""
-    echo "Usage: $0 [options]"
+    echo "Usage: $0 <-i SPECIES_LIST>"
     echo "Options:"
     echo "  -h, --help     Show this help message"
-    echo "  -i, --input    Set value for option1 (default: species.txt)"
+    echo "  -i, --input    Text file with species names or taxonomy id in lines (default: species.txt)"
     exit 0
 }
 
@@ -31,7 +31,7 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help) display_help ;;
         -i|--input) SPECIES_LIST="$2"; shift ;;
         # add other options here
-        # don't forget to add to usage and help too
+        # don't forget to add them to usage and help too
         *) echo "Unknown parameter passed: $1"; display_help ;;
     esac
     shift
@@ -49,6 +49,24 @@ function log_message() {
 
     echo "$log_entry"
     echo "$log_entry" >> "$log_file"
+}
+
+# Function to run a command and save output to log
+function run_and_log() {
+    local cmd="$1"
+    local action="$2"
+
+    output=$($cmd 2>&1)
+    status=$?
+
+    echo "$output" | tee -a "$log_file"
+
+    if [[ $status -ne 0 ]]; then
+        log_message "Error: $action failed. Exiting."
+        exit 1
+    else
+        log_message "$action completed successfully."
+    fi
 }
 
 log_message "Starting Easy Consensus Tree"
@@ -69,69 +87,77 @@ conda activate $CONDA_ENV
 # Fetch proteomes
 #######################################
 log_message "Fetching proteomes from $SPECIES_LIST..."
-python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST | tee -a $log_file
 
-if [[ $? -ne 0 ]]; then
-    log_message "Error: Fetching proteomes failed. Exiting."
-    exit 1
-fi
-log_message "Fetch completed successfully."
-
+run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST" "Fetching"
 
 #######################################
 # Merge proteomes
 #######################################
-log_message "Merging proteomes..."
-python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths | tee -a $log_file
+log_message "Merging proteomes from $SPECIES_LIST.paths..."
 
-if [[ $? -ne 0 ]]; then
-    log_message "Error: Merging proteomes failed. Exiting."
-    exit 1
-fi
-log_message "Merge completed successfully."
-
+run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths" "Merging"
 
 #######################################
 # Sequence clustering
 #######################################
-log_message "Clustering sequences..."
-# in: path to merged fasta.gz (problem: ambiguous name - this keeps being a problem down the line)
-# options: msi, clustermode, covmode, c
+
+# in: path to merged fasta.gz
+#   # problem: ambiguous name - this keeps being a problem down the line)
+#   # assumption for now: filename prefix is always [name_of_species_txt]_merged[nr_of_proteoms]
+MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST)" # e.g. names_merged5
+# options: msi (--min_seq_id), clustermode, covmode, c
 # out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
 
+log_message "Clustering sequences from $MERGED_PREFIX.fasta.gz..."
+
+run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/$MERGED_PREFIX.fasta.gz" "Clustering"
 
 #######################################
 # Filter clusters
 #######################################
-log_message "Filtering clusters..."
+log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
 # in:  ...all_seqs.fasta
-# out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR
+# option: -c (cutoff for min number of species in a nonpara cluster)
+# out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR/merged-prefix
+
+run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta" "Filtering"
 
 #######################################
 # Run MSA
 #######################################
-log_message "Running MSA..."
+log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
 # in: path to np.txt from filtering
-# out: aln files in nonpara folder
+# out: aln files in merged-prefix/nonpara folder
+
+# error while using clustalw: for some reason it thinks np.txt is an "unknown option"
+run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py -mode 2 $CURRENT_DIR/$MERGED_PREFIX/np.txt" "MSA"
 
 #######################################
 # Construction of gene family trees
 #######################################
-log_message "Constructing trees for gene families..."
+log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
 # in: aln files (see below)
 # out: nwk files in nonpara folder
 
 # the script processes only one file at a time with no wrapper
-# for file in dir/nonpara/*.aln; do python3 run_NJ.py $file | tee -a $log_file; done
+# shopt -s nullglob
+for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
+    run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
+done
+
+log_message "Gene family tree construction completed successfully."
 
 
 #######################################
 # Construction of consensus tree
 #######################################
-log_message "Constructing consensus tree..."
+log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
 # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
 # out: CONSENSUS.tree file in nonpara folder
 
+run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST 0.3" "Consensus tree construction"
+
+log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
 
 #######################################
 # Tree visualization
