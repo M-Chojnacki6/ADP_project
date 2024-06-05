@@ -25,7 +25,7 @@ wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforg
 bash Miniforge3-$(uname)-$(uname -m).sh
 ```
 
-## Intallation
+## Installation
 
 ```{bash}
 git clone https://github.com/M-Chojnacki6/ECT.git
@@ -35,6 +35,7 @@ cd ECT
 
 # Run
 conda env create -f environment.yml
+# mamba env create -f environment.yml # faster
 ```
 
 ## TO-DO list
