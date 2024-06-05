@@ -10,7 +10,7 @@ import os
 def nj_tree(alignment_file):
     directory, filename = os.path.split(alignment_file)
     calculator = DistanceCalculator('identity')
-    align = AlignIO.read(alignment_file, "fasta")
+    align = AlignIO.read(alignment_file, "clustal")
     distance_matrix = calculator.get_distance(align)
     constructor = DistanceTreeConstructor()
     NJTree = constructor.nj(distance_matrix)
