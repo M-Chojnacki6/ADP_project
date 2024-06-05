@@ -154,7 +154,7 @@ log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.n
 # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
 # out: CONSENSUS.tree file in nonpara folder
 
-run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara" "Consensus tree construction"
+run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST 0.3" "Consensus tree construction"
 
 log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
 
