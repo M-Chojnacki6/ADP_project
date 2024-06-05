@@ -129,7 +129,8 @@ log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
 # in: path to np.txt from filtering
 # out: aln files in merged-prefix/nonpara folder
 
-run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt" "MSA"
+# error while using clustalw: for some reason it thinks np.txt is an "unknown option"
+run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py -mode 2 $CURRENT_DIR/$MERGED_PREFIX/np.txt" "MSA"
 
 #######################################
 # Construction of gene family trees
