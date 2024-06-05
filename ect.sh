@@ -5,19 +5,23 @@
 # by Mateusz Chojnacki, Krzysztof Łukasz, Younginn Park, Daniel Zalewski
 #######################################
 
-# Default values for options
-SPECIES_LIST="species.txt"
+# Define absolute paths
+THIS_SCRIPT_PATH=$(realpath "$0")
+PROJECT_DIR=$(dirname "$SCRIPT") # ECT
+CURRENT_DIR=$(pwd) # wherever the user is
+
+SPECIES_LIST=$CURRENT_DIR/species.txt
 
 function display_help() {
-    echo "ECT - Easy Consensus Tree"
+    echo "ECT"
     echo "by Mateusz Chojnacki, Krzysztof Łukasz, Younginn Park, Daniel Zalewski"
     echo ""
     echo "A streamlined tool for reconstructing phylogenetic trees using whole-proteome approach."
     echo ""
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  -h, --help        Show this help message"
-    echo "  -i, --input    Set value for option1 (default: $SPECIES_LIST)"
+    echo "  -h, --help     Show this help message"
+    echo "  -i, --input    Set value for option1 (default: species.txt)"
     exit 0
 }
 
@@ -34,8 +38,8 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Initialize log file
-log_file="log.txt"
-echo "" > $log_file
+log_file=$CURRENT_DIR/log.txt
+echo "Welcome to Easy Consensus Tree" > $log_file
 
 # Function to print timestamped messages
 function log_message() {
@@ -65,7 +69,7 @@ conda activate $CONDA_ENV
 # Fetch proteomes
 #######################################
 log_message "Fetching proteomes from $SPECIES_LIST..."
-python3 scripts/fetch_proteomes.py $SPECIES_LIST | tee -a $log_file
+python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST | tee -a $log_file
 
 if [[ $? -ne 0 ]]; then
     log_message "Error: Fetching proteomes failed. Exiting."
@@ -78,7 +82,7 @@ log_message "Fetch completed successfully."
 # Merge proteomes
 #######################################
 log_message "Merging proteomes..."
-python3 scripts/merge_proteomes.py $SPECIES_LIST.paths | tee -a $log_file
+python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths | tee -a $log_file
 
 if [[ $? -ne 0 ]]; then
     log_message "Error: Merging proteomes failed. Exiting."
