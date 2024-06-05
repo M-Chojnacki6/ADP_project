@@ -95,10 +95,20 @@ log_message "Merge completed successfully."
 # Sequence clustering
 #######################################
 log_message "Clustering sequences..."
-# in: path to merged fasta.gz (problem: ambiguous name - this keeps being a problem down the line)
-# options: msi, clustermode, covmode, c
+# in: path to merged fasta.gz
+#   # problem: ambiguous name - this keeps being a problem down the line)
+#   # assumption for now: filename prefix is always [name_of_species_txt]_merged[nr_of_proteoms]
+MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST)" # e.g. names_merged5
+# options: msi (--min_seq_id), clustermode, covmode, c
 # out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
 
+python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/$MERGED_PREFIX.fasta.gz | tee -a $log_file
+
+if [[ $? -ne 0 ]]; then
+    log_message "Error: Sequence clustering failed. Exiting."
+    exit 1
+fi
+log_message "Clustering completed successfully."
 
 #######################################
 # Filter clusters
