@@ -118,7 +118,7 @@ log_message "Clustering completed successfully."
 log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
 # in:  ...all_seqs.fasta
 # option: -c (cutoff for min number of species in a nonpara cluster)
-# out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR
+# out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR/merged-prefix
 
 python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta | tee -a $log_file
 
@@ -133,8 +133,15 @@ log_message "Cluster filtering completed successfully."
 #######################################
 log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
 # in: path to np.txt from filtering
-# out: aln files in nonpara folder
+# out: aln files in merged-prefix/nonpara folder
 
+python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/${MERGED_PREFIX}/np.txt | tee -a $log_file
+
+if [[ $? -ne 0 ]]; then
+    log_message "Error: MSA failed. Exiting."
+    exit 1
+fi
+log_message "MSA completed successfully."
 
 #######################################
 # Construction of gene family trees
