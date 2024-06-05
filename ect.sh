@@ -51,6 +51,13 @@ function log_message() {
     fi
 }
 
+log_message "Starting Easy Consensus Tree"
+
+if [ ! -f $SPECIES_LIST ]; then
+    log_message "File $SPECIES_LIST not found"
+    exit 1
+fi
+
 # Activate the conda environment
 CONDA_ENV="ect_env"
 log_message "Activating conda environment: $CONDA_ENV"
