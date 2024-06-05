@@ -18,7 +18,7 @@ function display_help() {
     echo ""
     echo "A streamlined tool for reconstructing phylogenetic trees using whole-proteome approach."
     echo ""
-    echo "Usage: $0 [options]"
+    echo "Usage: $0 <-i SPECIES_LIST>"
     echo "Options:"
     echo "  -h, --help     Show this help message"
     echo "  -i, --input    Text file with species names or taxonomy id in lines (default: species.txt)"
