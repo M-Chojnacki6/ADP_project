@@ -1,11 +1,6 @@
-DHAV
-Wenling hagfish virus
-Semliki forest virus
-Yellow fever virus
 Ipomoea nil
-UP000000568
+Hibiscus syriacus
 1566351
 Planococcus citri
 UP000837953
-UP000000287
 GCF_000013425.1
