@@ -335,7 +335,7 @@ def process_by_name(input_txt, output_directory):
                     if check_tmp is None:
                         ln=fetch_proteome_ncbi(proteomeNCBI[0],proteomeNCBI[1],proteomeNCBI[2], output_directory)
                         if ln:
-                            ln_path = os.path.join(output_directory, ln)
+                            ln_path = os.path.join(output_directory, f"{ln}.fasta.gz") # hotfix
                             print(f"Proteome for {species} saved as {ln_path}")
                             paths_to_proteomes.append(ln_path)
                         else:
