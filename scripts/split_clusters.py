@@ -133,7 +133,7 @@ def main():
         print(f"{' '*12}> Split clusters file < \n\n{'#'*20}START{'#'*20}")
         print(f"\nInput file:\t\t\t{inputs[0]}")
         output=inputs[0].replace("_all_seqs.fasta","")
-        cutoff=max(3,int(inputs[1]*int(re.findall("[0-9]+$",output)[0]))) ## problematic line, "co autor miał na myśli?"
+        cutoff=max(3,int(inputs[1]*int(re.findall("[0-9]+$",output)[0])))
         print(f"cutoff\t\t\t\t{cutoff}")
         if not os.path.exists(output):
             print(f"Preparing output directory:\t{output}")
