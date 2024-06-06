@@ -356,9 +356,9 @@ def main():
         os.system(f"mkdir -p {default_output_dir}")
         print(f"preparing database directory: {default_output_dir}")
         
-    # if not os.path.exists("working_dir/"):
-    #     os.system("mkdir -p working_dir")
-    #     print(f"preparing working directory: ./working_dir")
+    if not os.path.exists("working_dir/"):
+        os.system("mkdir -p working_dir")
+        print(f"preparing working directory: ./working_dir")
         
     if not os.path.isfile(os.path.join(default_output_dir, taxon_library)):
         taxon_lib = os.path.join(default_output_dir, taxon_library)
