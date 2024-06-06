@@ -74,6 +74,7 @@ def process_fasta2MSA(input_file,is_fasta,mode):
             if result.returncode==0:
                 print(f"Mafft progress:\t{p+1}/{len(fasta_list)}")
             else:
+                subprocess.run(f"rm {path.replace('.fasta','.aln')}", shell=True) # fix empty aln
                 print(f"Mafft error!!! {p+1}/{len(fasta_list)}")  
 
 def main():
