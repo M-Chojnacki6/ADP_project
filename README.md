@@ -40,6 +40,8 @@ conda env create -f environment.yml
 
 ## Usage
 
+It is recommended to create a new folder
+
 ## TO-DO list
 Our main goal is to create a tool for an easy construction of a consensus tree based on a user-defined list of species names.
 
