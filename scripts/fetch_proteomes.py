@@ -134,7 +134,7 @@ def search_proteome_ncbi(species_name,id_type):
 
 def fetch_proteome_ncbi(proteome_id, taxon, names, output_directory):
     tmp_zip = os.path.join(output_directory, "tmp.zip")
-    tmp = tmp_zip = os.path.join(output_directory, "tmp")
+    tmp = os.path.join(output_directory, "tmp")
     protein_faa = os.path.join(output_directory, "tmp", "ncbi_dataset", "data", proteome_id, "protein.faa")
     proteome_id_fasta = os.path.join(output_directory, f"{proteome_id.replace('.','_')}.fasta")
     taxon_lib = os.path.join(output_directory, taxon_library)
