@@ -104,7 +104,7 @@ run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths
 # in: path to merged fasta.gz
 #   # problem: ambiguous name - this keeps being a problem down the line)
 #   # assumption for now: filename prefix is always [name_of_species_txt]_merged[nr_of_proteoms]
-MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST)" # e.g. names_merged5
+MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST.paths)" # e.g. names_merged5
 # options: msi (--min_seq_id), clustermode, covmode, c
 # out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
 
