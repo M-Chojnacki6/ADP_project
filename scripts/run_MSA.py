@@ -69,7 +69,7 @@ def process_fasta2MSA(input_file,is_fasta,mode):
             else:
                 print(f"Muscle error!!! {p+1}/{len(fasta_list)}")
         else:
-            result = subprocess.run(f"mafft --auto --clustalout {path} > {path.replace('.fasta','.aln')}", 
+            result = subprocess.run(f"mafft --auto --anysymbol --clustalout {path} > {path.replace('.fasta','.aln')}", 
                 shell=True,capture_output=True)
             if result.returncode==0:
                 print(f"Mafft progress:\t{p+1}/{len(fasta_list)}")
