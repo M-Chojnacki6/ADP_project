@@ -7,7 +7,7 @@
 
 ## Workflow outline
 
-![pipeline](img/pipeline.png)
+![pipeline](img/pipeline2.png)
 
 ## Requirements
 
