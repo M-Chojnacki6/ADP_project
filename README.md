@@ -36,6 +36,9 @@ cd ECT
 # Run
 conda env create -f environment.yml
 # mamba env create -f environment.yml # faster
+
+# Prepare main run script to execution
+chmod +x ect.sh
 ```
 
 ## Usage
