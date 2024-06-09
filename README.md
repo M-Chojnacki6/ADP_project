@@ -9,6 +9,11 @@
 
 ![pipeline](img/pipeline2.png)
 
+There are many tools avaiable to make philogenic tree given multiple sequences alignment (MSA) file or fasta file, as well as many tools, which can be used to culster set of sequences. However, currently there arent any publicly avaiable software, which costruct philogenetic tree given only list of species names/ids. ECT allows user to make just that in following steps: 
+1) downoading proteomes from public databases ([Uniprot Proteome](https://www.uniprot.org/) and [NCBI datasets](https://www.ncbi.nlm.nih.gov/datasets/)),
+2) merging set of found proteomes
+3) clustering merged file with using [MMseq2](https://github.com/soedinglab/MMseqs2) - easy-cluser
+
 ## Requirements
 
 
