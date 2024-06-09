@@ -33,8 +33,6 @@ def main():
     if not inputs is None:
         print(f"{' '*16}> Plot tree < \n\n{'#'*20}START{'#'*20}")
         print(f"\nInput file:\t\t\t{inputs[0]}\n")
-        output=inputs[0].replace(".tree",".png")
-        print(f"Output files:\t\t\t{output}")
         tree = Phylo.read(inputs[0],"newick")
         tree.ladderize()
         Phylo.draw(tree)
