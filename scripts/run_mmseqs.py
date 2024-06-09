@@ -41,12 +41,12 @@ default 0""",default=0)
         if not re.search(".+[.]fasta[.]gz$",in_file):
             print(f"Input file {in_file} not recognized as correct .fasta.gz file.")
             in_file=""
-    msi=0
+    msi=0.3
     if isinstance(args.msi,list):
-        if args.msi[0]>=0 and args.msi[0]<1:
-            msi=args.msi[0]
+        if float(args.msi[0])>=0 and float(args.msi[0])<1:
+            msi=float(args.msi[0])
         else:
-            print("parametr: msi = {args.msi[0]} out of range, changing to 0")
+            print("parametr: msi = {args.msi[0]} out of range, changing to 0.3")
     c=0.8
     if isinstance(args.c,list):
         if float(args.c[0])>=0 and float(args.c[0])<1:

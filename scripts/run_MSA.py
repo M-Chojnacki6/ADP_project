@@ -46,15 +46,21 @@ def process_fasta2MSA(input_file,is_fasta,mode):
         with open(input_file,"r") as f:
             for line in f:
                 fasta_list.append(line.strip())
+    currentdir=os.getcwd()
     for p,path in enumerate(fasta_list):
         if mode==0:
+            x =os.path.commonpath([currentdir,path])
+            path=path.replace(x,"")
+            if path[0]=="/":
+                path=path[1:]
             result = subprocess.run([f"clustalw", f"{path}" , "-align" ],
                 stdout=subprocess.PIPE)
             if result.returncode==0:
-                print(f"ClustaW progress:\t{p+1}/{len(fasta_list)}")
+                print(f"ClustalW progress:\t{p+1}/{len(fasta_list)}")
                 os.system(f"rm {path.replace('.fasta','.dnd')}")
             else:
-                print(f"ClustaW error!!! {p+1}/{len(fasta_list)}")
+                print(f"ClustalW error!!! {p+1}/{len(fasta_list)}")
+                print(result.stdout)
         elif mode==1:
             result = subprocess.run([f"muscle", "-align",f"{path}", "-output", f"{path.replace('.fasta','.afa')}" ], 
                 capture_output=True)
