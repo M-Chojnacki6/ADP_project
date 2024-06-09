@@ -20,6 +20,7 @@ CLUST_MODE=0
 COV_MODE=0
 COV_VALUE=0.8
 STEP=0
+MIN_CON=0.5
 
 function display_help() {
     echo "ECT"
@@ -32,6 +33,7 @@ function display_help() {
     echo "  -h, --help         Show this help message"
     echo "  -i, --input        Text file with species names or taxonomy id in lines (default: species.txt)"
     echo "  -o, --output       Name of the output directory; it is created if doesn't exist"
+    echo "  -p, --minCons      Minimum consensus for tree consensus construction; (default: 0.5)"
     echo "  -e, --step         Select step, from ehich you wont to start script (to use in case, when you 
                      have files made to some step, but due to some reasons script was abruptly aborted.
                      > 0: All steps (default)
@@ -75,6 +77,7 @@ while [[ "$#" -gt 0 ]]; do
         -c|--cov) COV_VALUE="$2"; shift ;;
         -e|--step) STEP="$2"; shift ;;
         -o|--output) NEW_CURRENT_DIR="$2"; shift ;;
+        -p|--minCons) MIN_CON="$2"; shift ;;
         # add other options here
         # don't forget to add them to usage and help too
         *) echo "Unknown parameter passed: $1"; display_help ;;
@@ -232,7 +235,7 @@ if [ $STEP -lt 7 ]; then
     # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
     # out: CONSENSUS.tree file in nonpara folder
 
-    run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST 0.3" "Consensus tree construction"
+    run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST $MIN_CON" "Consensus tree construction"
 
     log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
 else
