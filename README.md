@@ -55,3 +55,11 @@ Example usage: If the list of species called `species.txt` is located in the par
 - Adding supertrees (fasturec) for paralogus clusters
 - Cutoff for number of sequences / number of genomes
 - Type of consensus and cutoff to consensus
+
+## References
+
+- The UniProt Consortium, UniProt: the Universal Protein Knowledgebase in 2023, Nucleic Acids Research, Volume 51, Issue D1, 6 January 2023, Pages D523–D531, https://doi.org/10.1093/nar/gkac1052
+- NCBI Datasets, https://github.com/ncbi/datasets
+- Steinegger, M., Söding, J. Clustering huge protein sequence sets in linear time. Nat Commun 9, 2542 (2018). https://doi.org/10.1038/s41467-018-04964-5
+- Cock PJ, Antao T, Chang JT, Chapman BA, Cox CJ, Dalke A, et al. Biopython: freely available Python tools for computational molecular biology and bioinformatics. Bioinformatics. 2009;25(11):1422–3.
+- Moreno, M. A., Sukumaran, J., and M. T. Holder. 2024. DendroPy 5: a mature Python library for phylogenetic computing. arXiv preprint arXiv:2405.14120. https://doi.org/10.48550/arXiv.2405.14120
