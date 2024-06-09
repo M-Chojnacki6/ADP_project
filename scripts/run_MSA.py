@@ -49,7 +49,8 @@ def process_fasta2MSA(input_file,is_fasta,mode):
     currentdir=os.getcwd()
     for p,path in enumerate(fasta_list):
         if mode==0:
-            x =os.path.commonpath([currentdir,path])
+            os.system(f"cd {os.path.dirname(path)}")
+            x =os.path.commonpath([os.getcwd(),path])
             path=path.replace(x,"")
             if path[0]=="/":
                 path=path[1:]
@@ -81,7 +82,9 @@ def process_fasta2MSA(input_file,is_fasta,mode):
                 print(f"Mafft progress:\t{p+1}/{len(fasta_list)}")
             else:
                 subprocess.run(f"rm {path.replace('.fasta','.aln')}", shell=True) # fix empty aln
-                print(f"Mafft error!!! {p+1}/{len(fasta_list)}")  
+                print(f"Mafft error!!! {p+1}/{len(fasta_list)}") 
+    if mode==0:
+        os.system(f"cd {currentdir}")
 
 def main():
     inputs=parse_args()
