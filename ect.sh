@@ -8,7 +8,7 @@
 # Define absolute paths
 THIS_SCRIPT_PATH=$(realpath "$0")
 PROJECT_DIR=$(dirname $THIS_SCRIPT_PATH) # ECT
-CURRENT_DIR=$(pwd) # wherever the user is, safety valve
+CURRENT_DIR=$PWD # wherever the user is, safety valve
 
 SPECIES_LIST=$CURRENT_DIR/species.txt
 
@@ -31,6 +31,7 @@ function display_help() {
     echo "Options:"
     echo "  -h, --help         Show this help message"
     echo "  -i, --input        Text file with species names or taxonomy id in lines (default: species.txt)"
+    echo "  -o, --output       Name of the output directory; it is created if doesn't exist"
     echo "  -e, --step         Select step, from ehich you wont to start script (to use in case, when you 
                      have files made to some step, but due to some reasons script was abruptly aborted.
                      > 0: All steps (default)
@@ -73,12 +74,25 @@ while [[ "$#" -gt 0 ]]; do
         -v|--covMode) COV_MODE="$2"; shift ;;
         -c|--cov) COV_VALUE="$2"; shift ;;
         -e|--step) STEP="$2"; shift ;;
+        -o|--output) NEW_CURRENT_DIR="$2"; shift ;;
         # add other options here
         # don't forget to add them to usage and help too
         *) echo "Unknown parameter passed: $1"; display_help ;;
     esac
     shift
 done
+
+# changing current direcrtory to selected, if neccesary
+if [[ ! -d $NEW_CURRENT_DIR ]];then
+    mkdir $NEW_CURRENT_DIR
+    echo "Creating output directory $NEW_CURRENT_DIR"
+fi
+
+
+if [[ -d $NEW_CURRENT_DIR ]];then
+    echo "Setting output directory: $NEW_CURRENT_DIR"
+    $CURRENT_DIR=$NEW_CURRENT_DIR
+fi
 
 # Initialize log file
 log_file=$CURRENT_DIR/log.txt
@@ -182,7 +196,7 @@ fi
 # Run MSA
 #######################################
 if [ $STEP -lt 5 ]; then
-    log_message "Running MSA on trees from $MERGED_PREFIX/np.txt..."
+    log_message "Running MSA on clusters from $MERGED_PREFIX/np.txt..."
     # in: path to np.txt from filtering
     # out: aln files in merged-prefix/nonpara folder
 
@@ -195,12 +209,12 @@ fi
 # Construction of gene family trees
 #######################################
 if [ $STEP -lt 6 ]; then
-log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
-# in: aln files (see below)
-# out: nwk files in nonpara folder
+    log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
+    # in: aln files (see below)
+    # out: nwk files in nonpara folder
 
-# the script processes only one file at a time with no wrapper
-# shopt -s nullglob
+    # the script processes only one file at a time with no wrapper
+    # shopt -s nullglob
     for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
         run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
     done
@@ -213,24 +227,27 @@ fi
 #######################################
 # Construction of consensus tree
 #######################################
-log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
-# in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
-# out: CONSENSUS.tree file in nonpara folder
+if [ $STEP -lt 7 ]; then
+    log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
+    # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
+    # out: CONSENSUS.tree file in nonpara folder
 
-run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST 0.3" "Consensus tree construction"
+    run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST 0.3" "Consensus tree construction"
 
-log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
+    log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
+else
+    log_message "Skipping consensus tree construction step from $MERGED_PREFIX/nonpara/*nwk..."
+fi
 
 
 #######################################
 # Tree visualization
 #######################################
-# ?TODO?
+log_message "Show tree from $MERGED_PREFIX/nonpara/CONSENSUS.tree..."
+# in: CONSENSUS.tree file in nonpara folder
+
+run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree" "Tree visualisation"
 
 
-# if [[ $? -ne 0 ]]; then
-#     log_message "Error: Visualizing consensus tree failed. Exiting."
-#     exit 1
-# fi
 
 log_message "All finished"
