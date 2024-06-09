@@ -13,9 +13,10 @@ There are many tools avaiable to make philogenic tree given multiple sequences a
 1) downoading proteomes from public databases ([Uniprot Proteome](https://www.uniprot.org/) and [NCBI datasets](https://www.ncbi.nlm.nih.gov/datasets/)),
 2) merging set of found proteomes
 3) clustering merged fasta file with using [MMseq2](https://github.com/soedinglab/MMseqs2) - easy-cluser
-4) selecting clusters containing at least 3 or 0.3*number of species sequeances
-5) constructing NJ trees using [Biopython](https://biopython.org/wiki/Phylo) package
-6) construction consensus tree using [dendrogram](https://pypi.org/project/DendroPy/) package
+4) selecting clusters containing at least 3 or 0.3*[number of species] sequeances
+5) making multiple sequences alignment using [ClustalW](http://www.clustal.org/clustal2/), [Muscle](https://drive5.com/muscle/) or [Mafft](https://mafft.cbrc.jp/alignment/software/)
+6) constructing NJ trees using [Biopython](https://biopython.org/wiki/Phylo) package
+7) construction consensus tree using [dendrogram](https://pypi.org/project/DendroPy/) package
 
 ## Requirements
 
