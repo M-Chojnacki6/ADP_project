@@ -1,0 +1,10 @@
+Homo sapiens
+Mus musculus
+Rattus norvegicus
+Danio rerio
+Gallus gallus
+Xenopus laevis
+Bos taurus
+Canis lupus familiaris
+Felis catus
+Sus scrofa
