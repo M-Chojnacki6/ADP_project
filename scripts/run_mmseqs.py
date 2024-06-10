@@ -84,7 +84,7 @@ def main():
         os.system(f"mmseqs easy-cluster {inputs[0]} {output} working_dir/tmpDir --min-seq-id {inputs[1]} --cluster-mode {inputs[2]} --cov-mode {inputs[3]} -c {inputs[4]}")
         os.system(f"rm {output}_rep_seq.fasta")
         os.system("rm -r working_dir/tmpDir")
-#        os.system(f"rm {output}_cluster.tsv")
+        os.system(f"rm {output}_cluster.tsv")
 
 
 if __name__ == "__main__":
