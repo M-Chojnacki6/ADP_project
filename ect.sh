@@ -22,6 +22,7 @@ COV_VALUE=0.8
 STEP=0
 MIN_CON=0.5
 SHOW_INFO=0
+RM_FILE=0
 
 function display_help() {
     echo "ECT"
@@ -64,6 +65,8 @@ function display_help() {
                      > 2 - Mafft"
     echo "  -d, --description  Show help information of not-skipped subscripts; doesn't have positional 
                      argument (default: Fasle)"
+    echo "  -r, --remove       Text file with species names or taxonomy id in lines to remove from local database
+                               and describing it taxon_library.csv file"
     exit 0
 }
 
@@ -80,10 +83,12 @@ while [[ "$#" -gt 0 ]]; do
         -e|--step) STEP="$2"; shift ;;
         -p|--minCons) MIN_CON="$2"; shift ;;
         -d|--description) SHOW_INFO=1 ;;
+        -r|--remove) RM_FILE="$2"; shift ;;
         *) echo "Unknown parameter passed: $1"; display_help ;;
     esac
     shift
 done
+
 
 
 # Initialize log file
@@ -100,6 +105,7 @@ echo "-v       $COV_MODE                (covMode parameter for MMseq)" >> $log_f
 echo "-c       $COV_VALUE              (cov parameter for MMseq)" >> $log_file
 echo "-m       $MSA_MODE                (MSA mode)" >> $log_file
 echo "-d       $SHOW_INFO                (if show help from subscripts)" >> $log_file
+echo "-r       $RM_FILE                 (file with proteomes names to remove)" >> $log_file
 echo "#################################################################" >> $log_file
 
 # Function to print timestamped messages
@@ -144,143 +150,154 @@ log_message "Activating conda environment: $CONDA_ENV"
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate $CONDA_ENV
 
-
 #######################################
-# Fetch proteomes
+# Remove proteomes
 #######################################
-if [ $STEP -lt 1 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Fetching proteomes from $SPECIES_LIST..."
+if [ -e $RM_FILE ]; then
+    log_message "Removing proteomes from $RM_FILE..."
+    run_and_log "python3 $PROJECT_DIR/scripts/remove_proteomes.py $RM_FILE -l $PROJECT_DIR/proteome_database/taxon_library.csv" "Removing"
+else
+  
 
-        run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST" "Fetching"
+
+    #######################################
+    # Fetch proteomes
+    #######################################
+    if [ $STEP -lt 1 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Fetching proteomes from $SPECIES_LIST..."
+
+            run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST" "Fetching"
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py -h" "Showing fetching help"
+            run_and_log "python3 $PROJECT_DIR/scripts/remove_proteomes.py -h" "Showing removing help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py -h" "Showing fetching help"
+        log_message "Skipping fetching step from $SPECIES_LIST..."
     fi
-else
-    log_message "Skipping fetching step from $SPECIES_LIST..."
-fi
-#######################################
-# Merge proteomes
-#######################################
-if [ $STEP -lt 2 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Merging proteomes from $SPECIES_LIST.paths..."
+    #######################################
+    # Merge proteomes
+    #######################################
+    if [ $STEP -lt 2 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Merging proteomes from $SPECIES_LIST.paths..."
 
-        run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths" "Merging"
+            run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths" "Merging"
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py -h" "Showing merging help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py -h" "Showing merging help"
+        log_message "Skipping merging step from $SPECIES_LIST.paths..."
     fi
-else
-    log_message "Skipping merging step from $SPECIES_LIST.paths..."
-fi
-#######################################
-# Sequence clustering
-#######################################
+    #######################################
+    # Sequence clustering
+    #######################################
 
-# in: path to merged fasta.gz
-#   # problem: ambiguous name - this keeps being a problem down the line)
-#   # assumption for now: filename prefix is always [name_of_species_txt]_merged[nr_of_proteoms]
-MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST.paths)" # e.g. names_merged5
-# options: msi (--min_seq_id), clustermode, covmode, c
-# out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
-if [ $STEP -lt 3 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Clustering sequences from $MERGED_PREFIX.fasta.gz..."
+    # in: path to merged fasta.gz
+    #   # problem: ambiguous name - this keeps being a problem down the line)
+    #   # assumption for now: filename prefix is always [name_of_species_txt]_merged[nr_of_proteoms]
+    MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST.paths)" # e.g. names_merged5
+    # options: msi (--min_seq_id), clustermode, covmode, c
+    # out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
+    if [ $STEP -lt 3 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Clustering sequences from $MERGED_PREFIX.fasta.gz..."
 
-        run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/$MERGED_PREFIX.fasta.gz -msi $MSI_MODE -clusterMode $CLUST_MODE -covMode $COV_MODE -c $COV_VALUE" "Clustering"
+            run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/$MERGED_PREFIX.fasta.gz -msi $MSI_MODE -clusterMode $CLUST_MODE -covMode $COV_MODE -c $COV_VALUE" "Clustering"
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py -h" "Showing run_mmseqs.py help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py -h" "Showing run_mmseqs.py help"
+        log_message "Skipping MMseq2 clusterng step from $MERGED_PREFIX.fasta.gz..."
     fi
-else
-    log_message "Skipping MMseq2 clusterng step from $MERGED_PREFIX.fasta.gz..."
-fi
-#######################################
-# Filter clusters
-#######################################
-if [ $STEP -lt 4 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
-        # in:  ...all_seqs.fasta
-        # option: -c (cutoff for min number of species in a nonpara cluster)
-        # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR/merged-prefix
+    #######################################
+    # Filter clusters
+    #######################################
+    if [ $STEP -lt 4 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
+            # in:  ...all_seqs.fasta
+            # option: -c (cutoff for min number of species in a nonpara cluster)
+            # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR/merged-prefix
 
-        run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta" "Filtering"
+            run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta" "Filtering"
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py -h" "Showing filtering help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py -h" "Showing filtering help"
+        log_message "Skipping filering step from ${MERGED_PREFIX}_all_seqs.fasta..."
     fi
-else
-    log_message "Skipping filering step from ${MERGED_PREFIX}_all_seqs.fasta..."
-fi
-#######################################
-# Run MSA
-#######################################
-if [ $STEP -lt 5 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Running MSA on clusters from $MERGED_PREFIX/np.txt..."
-        # in: path to np.txt from filtering
-        # out: aln files in merged-prefix/nonpara folder
+    #######################################
+    # Run MSA
+    #######################################
+    if [ $STEP -lt 5 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Running MSA on clusters from $MERGED_PREFIX/np.txt..."
+            # in: path to np.txt from filtering
+            # out: aln files in merged-prefix/nonpara folder
 
-        # error while using clustalw: for some reason it thinks np.txt is an "unknown option"
-        run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt -mode $MSA_MODE" "MSA"
+            # error while using clustalw: for some reason it thinks np.txt is an "unknown option"
+            run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt -mode $MSA_MODE" "MSA"
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py -h" "Showing run_MSA.py help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py -h" "Showing run_MSA.py help"
+        log_message "Skipping MSA step from $MERGED_PREFIX/np.txt..."
     fi
-else
-    log_message "Skipping MSA step from $MERGED_PREFIX/np.txt..."
-fi
-#######################################
-# Construction of gene family trees
-#######################################
-if [ $STEP -lt 6 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
-        # in: aln files (see below)
-        # out: nwk files in nonpara folder
+    #######################################
+    # Construction of gene family trees
+    #######################################
+    if [ $STEP -lt 6 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
+            # in: aln files (see below)
+            # out: nwk files in nonpara folder
 
-        # the script processes only one file at a time with no wrapper
-        # shopt -s nullglob
-        for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
-            run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
-        done
+            # the script processes only one file at a time with no wrapper
+            # shopt -s nullglob
+            for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
+                run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
+            done
 
-        log_message "Gene family tree construction completed successfully."
+            log_message "Gene family tree construction completed successfully."
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py -h" "Showing tree construction help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py -h" "Showing tree construction help"
+        log_message "Skipping NJ trees construction step from $MERGED_PREFIX/nonpara/*aln..."
     fi
-else
-    log_message "Skipping NJ trees construction step from $MERGED_PREFIX/nonpara/*aln..."
-fi
 
-#######################################
-# Construction of consensus tree
-#######################################
-if [ $STEP -lt 7 ]; then
-    if [ $SHOW_INFO -lt 1 ]; then
-        log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
-        # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
-        # out: CONSENSUS.tree file in nonpara folder
+    #######################################
+    # Construction of consensus tree
+    #######################################
+    if [ $STEP -lt 7 ]; then
+        if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
+            # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
+            # out: CONSENSUS.tree file in nonpara folder
 
-        run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST $MIN_CON" "Consensus tree construction"
+            run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST $MIN_CON" "Consensus tree construction"
 
-        log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
+            log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
+        else
+            run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py -h" "Showing consensus tree construction help"
+        fi
     else
-        run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py -h" "Showing consensus tree construction help"
+        log_message "Skipping consensus tree construction step from $MERGED_PREFIX/nonpara/*nwk..."
     fi
-else
-    log_message "Skipping consensus tree construction step from $MERGED_PREFIX/nonpara/*nwk..."
+
+
+    #######################################
+    # Tree visualization
+    #######################################
+    log_message "Show tree from $MERGED_PREFIX/nonpara/CONSENSUS.tree..."
+    # in: CONSENSUS.tree file in nonpara folder
+    if [ $SHOW_INFO -lt 1 ]; then
+        run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree" "Tree visualisation"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py -h" "Showing tree visualisation help"
+    fi
+
+
+    log_message "All finished"
 fi
-
-
-#######################################
-# Tree visualization
-#######################################
-log_message "Show tree from $MERGED_PREFIX/nonpara/CONSENSUS.tree..."
-# in: CONSENSUS.tree file in nonpara folder
-if [ $SHOW_INFO -lt 1 ]; then
-    run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree" "Tree visualisation"
-else
-    run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py -h" "Showing tree visualisation help"
-fi
-
-
-log_message "All finished"
