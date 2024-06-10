@@ -21,6 +21,7 @@ COV_MODE=0
 COV_VALUE=0.8
 STEP=0
 MIN_CON=0.5
+SHOW_INFO=0
 
 function display_help() {
     echo "ECT"
@@ -32,7 +33,7 @@ function display_help() {
     echo "Options:"
     echo "  -h, --help         Show this help message"
     echo "  -i, --input        Text file with species names or taxonomy id in lines (default: species.txt)"
-    echo "  -p, --minCons      Minimum consensus for tree consensus construction; (default: 0.5)"
+    echo "  -p, --minCons      Minimum support consensus for consensus tree construction; (default: 0.5)"
     echo "  -e, --step         Select step, from ehich you wont to start script (to use in case, when you 
                      have files made to some step, but due to some reasons script was abruptly aborted.
                      > 0: All steps (default)
@@ -42,7 +43,7 @@ function display_help() {
                      > 4: Start with making MSA
                      > 5: start with construction NJ trees
                      > 6: start with preparing consensus (final) tree"
-    echo "  -s, --msi,         MMseq2 option: list matches above this sequence identity (range 0.0-1.0); 
+    echo "  -s, --msi          MMseq2 option: list matches above this sequence identity (range 0.0-1.0); 
                      (default: 0.3)"
     echo "  -l, --clusterMode  MMseq2 option: select clustering mode:
                      > 0: Set-Cover (greedy) (default)
@@ -61,6 +62,8 @@ function display_help() {
                      > 0 - ClustalW (default)
                      > 1 - Muscle
                      > 2 - Mafft"
+    echo "  -d, --description  Show help information of not-skipped subscripts; doesn't have positional 
+                     argument (default: Fasle)"
     exit 0
 }
 
@@ -76,6 +79,7 @@ while [[ "$#" -gt 0 ]]; do
         -c|--cov) COV_VALUE="$2"; shift ;;
         -e|--step) STEP="$2"; shift ;;
         -p|--minCons) MIN_CON="$2"; shift ;;
+        -d|--description) SHOW_INFO=1 ;;
         # add other options here
         # don't forget to add them to usage and help too
         *) echo "Unknown parameter passed: $1"; display_help ;;
@@ -87,6 +91,18 @@ done
 # Initialize log file
 log_file=$CURRENT_DIR/log.txt
 echo "Welcome to Easy Consensus Tree" > $log_file
+echo "#################################################################" >> $log_file
+echo "Provided parameters:"  >> $log_file
+echo "-i       $SPECIES_LIST      (input file)" >> $log_file
+echo "-e       $STEP                (skipping steps to ...)" >> $log_file
+echo "-p       $MIN_CON              (minimum support for consensus tree)" >> $log_file
+echo "-s       $MSI_MODE              (msi parameter for MMseq)" >> $log_file
+echo "-l       $CLUST_MODE                (clusterMode parameter for MMseq)" >> $log_file
+echo "-v       $COV_MODE                (covMode parameter for MMseq)" >> $log_file
+echo "-c       $COV_VALUE              (cov parameter for MMseq)" >> $log_file
+echo "-m       $MSA_MODE                (MSA mode)" >> $log_file
+echo "-d       $SHOW_INFO                (if show help from subscripts)" >> $log_file
+echo "#################################################################" >> $log_file
 
 # Function to print timestamped messages
 function log_message() {
@@ -135,9 +151,13 @@ conda activate $CONDA_ENV
 # Fetch proteomes
 #######################################
 if [ $STEP -lt 1 ]; then
-    log_message "Fetching proteomes from $SPECIES_LIST..."
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Fetching proteomes from $SPECIES_LIST..."
 
-    run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST" "Fetching"
+        run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST" "Fetching"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py -h" "Showing fetching help"
+    fi
 else
     log_message "Skipping fetching step from $SPECIES_LIST..."
 fi
@@ -145,9 +165,13 @@ fi
 # Merge proteomes
 #######################################
 if [ $STEP -lt 2 ]; then
-    log_message "Merging proteomes from $SPECIES_LIST.paths..."
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Merging proteomes from $SPECIES_LIST.paths..."
 
-    run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths" "Merging"
+        run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py $SPECIES_LIST.paths" "Merging"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/merge_proteomes.py -h" "Showing merging help"
+    fi
 else
     log_message "Skipping merging step from $SPECIES_LIST.paths..."
 fi
@@ -162,9 +186,13 @@ MERGED_PREFIX="$(basename $SPECIES_LIST .txt)_merged$(grep -c '.' $SPECIES_LIST.
 # options: msi (--min_seq_id), clustermode, covmode, c
 # out: ...all_seqs.fasta, ...cluster.csv in $CURRENT_DIR
 if [ $STEP -lt 3 ]; then
-    log_message "Clustering sequences from $MERGED_PREFIX.fasta.gz..."
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Clustering sequences from $MERGED_PREFIX.fasta.gz..."
 
-    run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/$MERGED_PREFIX.fasta.gz -msi $MSI_MODE -clusterMode $CLUST_MODE -covMode $COV_MODE -c $COV_VALUE" "Clustering"
+        run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py $CURRENT_DIR/$MERGED_PREFIX.fasta.gz -msi $MSI_MODE -clusterMode $CLUST_MODE -covMode $COV_MODE -c $COV_VALUE" "Clustering"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/run_mmseqs.py -h" "Showing run_mmseqs.py help"
+    fi
 else
     log_message "Skipping MMseq2 clusterng step from $MERGED_PREFIX.fasta.gz..."
 fi
@@ -172,13 +200,16 @@ fi
 # Filter clusters
 #######################################
 if [ $STEP -lt 4 ]; then
-    log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
-    # in:  ...all_seqs.fasta
-    # option: -c (cutoff for min number of species in a nonpara cluster)
-    # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR/merged-prefix
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Filtering clusters from ${MERGED_PREFIX}_all_seqs.fasta..."
+        # in:  ...all_seqs.fasta
+        # option: -c (cutoff for min number of species in a nonpara cluster)
+        # out: folders para and nonpara and files np.txt and p.txt in $CURRENT_DIR/merged-prefix
 
-    run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta" "Filtering"
-
+        run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py $CURRENT_DIR/${MERGED_PREFIX}_all_seqs.fasta" "Filtering"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/split_clusters.py -h" "Showing filtering help"
+    fi
 else
     log_message "Skipping filering step from ${MERGED_PREFIX}_all_seqs.fasta..."
 fi
@@ -186,12 +217,16 @@ fi
 # Run MSA
 #######################################
 if [ $STEP -lt 5 ]; then
-    log_message "Running MSA on clusters from $MERGED_PREFIX/np.txt..."
-    # in: path to np.txt from filtering
-    # out: aln files in merged-prefix/nonpara folder
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Running MSA on clusters from $MERGED_PREFIX/np.txt..."
+        # in: path to np.txt from filtering
+        # out: aln files in merged-prefix/nonpara folder
 
-    # error while using clustalw: for some reason it thinks np.txt is an "unknown option"
-    run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt -mode $MSA_MODE" "MSA"
+        # error while using clustalw: for some reason it thinks np.txt is an "unknown option"
+        run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py $CURRENT_DIR/$MERGED_PREFIX/np.txt -mode $MSA_MODE" "MSA"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/run_MSA.py -h" "Showing run_MSA.py help"
+    fi
 else
     log_message "Skipping MSA step from $MERGED_PREFIX/np.txt..."
 fi
@@ -199,17 +234,21 @@ fi
 # Construction of gene family trees
 #######################################
 if [ $STEP -lt 6 ]; then
-    log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
-    # in: aln files (see below)
-    # out: nwk files in nonpara folder
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Constructing trees for gene families in folder $MERGED_PREFIX/nonpara/*.aln..."
+        # in: aln files (see below)
+        # out: nwk files in nonpara folder
 
-    # the script processes only one file at a time with no wrapper
-    # shopt -s nullglob
-    for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
-        run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
-    done
+        # the script processes only one file at a time with no wrapper
+        # shopt -s nullglob
+        for file in $CURRENT_DIR/$MERGED_PREFIX/nonpara/*aln; do
+            run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py $file" "Tree construction"
+        done
 
-    log_message "Gene family tree construction completed successfully."
+        log_message "Gene family tree construction completed successfully."
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/run_NJ_on_alignment.py -h" "Showing tree construction help"
+    fi
 else
     log_message "Skipping NJ trees construction step from $MERGED_PREFIX/nonpara/*aln..."
 fi
@@ -218,13 +257,17 @@ fi
 # Construction of consensus tree
 #######################################
 if [ $STEP -lt 7 ]; then
-    log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
-    # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
-    # out: CONSENSUS.tree file in nonpara folder
+    if [ $SHOW_INFO -lt 1 ]; then
+        log_message "Constructing consensus tree for trees in $MERGED_PREFIX/nonpara/*.nwk..."
+        # in: folder with nwk (nonpara folder), file with taxa list ($SPECIES_LIST), min_freq (from user, this is not optional, for now)
+        # out: CONSENSUS.tree file in nonpara folder
 
-    run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST $MIN_CON" "Consensus tree construction"
+        run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py $CURRENT_DIR/$MERGED_PREFIX/nonpara $SPECIES_LIST $MIN_CON" "Consensus tree construction"
 
-    log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
+        log_message "Final tree saved to $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree"
+    else
+        run_and_log "python3 $PROJECT_DIR/scripts/run_consensus.py -h" "Showing consensus tree construction help"
+    fi
 else
     log_message "Skipping consensus tree construction step from $MERGED_PREFIX/nonpara/*nwk..."
 fi
@@ -235,9 +278,11 @@ fi
 #######################################
 log_message "Show tree from $MERGED_PREFIX/nonpara/CONSENSUS.tree..."
 # in: CONSENSUS.tree file in nonpara folder
-
-run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree" "Tree visualisation"
-
+if [ $SHOW_INFO -lt 1 ]; then
+    run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py $CURRENT_DIR/$MERGED_PREFIX/nonpara/CONSENSUS.tree" "Tree visualisation"
+else
+    run_and_log "python3 $PROJECT_DIR/scripts/plot_tree.py -h" "Showing tree visualisation help"
+fi
 
 
 log_message "All finished"
