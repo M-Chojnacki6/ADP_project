@@ -17,8 +17,8 @@ def parse_args():
     parser.add_argument('input',metavar= 'i',nargs=1, help="""Path to the input TXT file containing 
         species names or organism IDs""")
     parser.add_argument('-l',metavar= 'l',nargs=1, help=f"""Path to the itaxon_library.csv containing 
-        informations about downloaded proteomes. Default = ./proteome_database/{taxon_library}""",
-        default=f"./proteome_database/{taxon_library}")
+        informations about downloaded proteomes. Default = ./ECT/proteome_database/{taxon_library}""",
+        default=f"./ECT/proteome_database/{taxon_library}")
 
 
     args = parser.parse_args()
@@ -34,9 +34,9 @@ def parse_args():
         if os.path.isfile(args.l[0]):
             library=args.l[0]
         else:
-            library=f"./proteome_database/{taxon_library}"
+            library=f"./ECT/proteome_database/{taxon_library}"
     else:
-        library=f"./proteome_database/{taxon_library}"
+        library=f"./ECT/proteome_database/{taxon_library}"
     if in_file:    
         return [in_file,library]
     else:
