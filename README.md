@@ -66,7 +66,11 @@ To show the most basic help, run:
 ./ECT/ect.sh --help
 ```
 
-If you have prepared same files from middle analasys, but your work was interrupted, leading to stop of the of the workflow, yu can use -e optin, to start from the last saved point
+If you have prepared same files from middle analasys, but your work was interrupted, leading to stop of the of the workflow, yu can use -e option, to start from the last saved point. E.g. when you stopped workflow after clustering, running:
+```{bash}
+./ECT/ect.sh -i species.txt -e 3 
+```
+start workflow from filetering step. To see detailed description, use flag -h or --help. 
 
 >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
 
