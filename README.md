@@ -77,7 +77,10 @@ starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - 
 |------------|-----------|-------------|
 | -i | --input  |      Text file with species names or taxonomy id in lines (default: species.txt) |
 | -p | --minCons |      Minimum support consensus for consensus tree construction; (default: 0.5) |
-| -e | --step   |      Select step, from which you wont to start script
+| -s | --msi   |    MMseq2 option: list matches above this sequence identity (range 0.0-1.0); (default: 0.3)|
+| -l | --clusterMode | MMseq2 option: select clustering mode |
+| -v |--covMode  |    MMseq2 option:  sevuence coverage mode |
+| -e | --step   |      Select step, from which you wont to start script |
   - 0    All steps (default)
   - 1    start with merging step
   - 2    start with MMseq2 clustering
@@ -85,9 +88,7 @@ starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - 
   - 4    Start with making MSA
   - 5    start with construction NJ trees
   - 6    start with preparing consensus (final) tree |
-- -s, --msi       MMseq2 option: list matches above this sequence identity (range 0.0-1.0); (default: 0.3)
-- -l, --clusterMode  MMseq2 option: select clustering mode 
-- -v, --covMode      MMseq2 option:  sevuence coverage mode
+
 
 
 >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
