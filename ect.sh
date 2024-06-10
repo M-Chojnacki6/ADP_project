@@ -34,8 +34,8 @@ function display_help() {
     echo "  -h, --help         Show this help message"
     echo "  -i, --input        Text file with species names or taxonomy id in lines (default: species.txt)"
     echo "  -p, --minCons      Minimum support consensus for consensus tree construction; (default: 0.5)"
-    echo "  -e, --step         Select step, from ehich you wont to start script (to use in case, when you 
-                     have files made to some step, but due to some reasons script was abruptly aborted.
+    echo "  -e, --step         Select step, from which you wont to start script (to use in case, when you 
+                     have files made to some step, but due to some reasons script was abruptly stopped).
                      > 0: All steps (default)
                      > 1: start with merging step
                      > 2: start with MMseq2 clustering
@@ -80,8 +80,6 @@ while [[ "$#" -gt 0 ]]; do
         -e|--step) STEP="$2"; shift ;;
         -p|--minCons) MIN_CON="$2"; shift ;;
         -d|--description) SHOW_INFO=1 ;;
-        # add other options here
-        # don't forget to add them to usage and help too
         *) echo "Unknown parameter passed: $1"; display_help ;;
     esac
     shift
