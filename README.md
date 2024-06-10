@@ -73,13 +73,17 @@ If you have prepared same files from middle analasys, but your work was interrup
 starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - output of MMseq2 clustering). To see detailed description, use flag -h or --help.
 
 ### Options description
+Shorter version of description provided in --help.
+
 | short flag | long flag | description |
 |------------|-----------|-------------|
 | -i | --input  |      Text file with species names or taxonomy id in lines (default: species.txt) |
 | -p | --minCons |      Minimum support consensus for consensus tree construction; (default: 0.5) |
 | -s | --msi   |    MMseq2 option: list matches above this sequence identity (range 0.0-1.0); (default: 0.3)|
 | -l | --clusterMode | MMseq2 option: select clustering mode |
-| -v |--covMode  |    MMseq2 option:  sevuence coverage mode |
+| -v | --covMode  |    MMseq2 option:  sevuence coverage mode |
+| -c | --cov |  MMseq2 option: list matches above this fraction of aligned (covered) residues; (default: 0.800) |
+| -m | --msa    |      Algorithm used to MSA (default ClustalW) | 
 | -e | --step   |      Select step, from which you wont to start script |
   - 0    All steps (default)
   - 1    start with merging step
