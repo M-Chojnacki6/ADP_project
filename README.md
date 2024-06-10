@@ -86,7 +86,7 @@ Shorter version of description provided in --help.
 | -m | --msa    |      Algorithm used to MSA (default: ClustalW) | 
 | -d | --description | Show help information of not-skipped subscripts |
 | -r | --remove  |     Text file with species names or taxonomy id in lines to remove from local database and describing it taxon_library.csv file|
-| -e | --step   |      Select step, from which you wont to start script |
+| -e | --step   |      Select step, from which you want to start script: |
   - 0    All steps (default)
   - 1    start with merging step
   - 2    start with MMseq2 clustering
