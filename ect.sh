@@ -32,7 +32,6 @@ function display_help() {
     echo "Options:"
     echo "  -h, --help         Show this help message"
     echo "  -i, --input        Text file with species names or taxonomy id in lines (default: species.txt)"
-    echo "  -o, --output       Name of the output directory; it is created if doesn't exist"
     echo "  -p, --minCons      Minimum consensus for tree consensus construction; (default: 0.5)"
     echo "  -e, --step         Select step, from ehich you wont to start script (to use in case, when you 
                      have files made to some step, but due to some reasons script was abruptly aborted.
@@ -76,7 +75,6 @@ while [[ "$#" -gt 0 ]]; do
         -v|--covMode) COV_MODE="$2"; shift ;;
         -c|--cov) COV_VALUE="$2"; shift ;;
         -e|--step) STEP="$2"; shift ;;
-        -o|--output) NEW_CURRENT_DIR="$2"; shift ;;
         -p|--minCons) MIN_CON="$2"; shift ;;
         # add other options here
         # don't forget to add them to usage and help too
@@ -85,17 +83,6 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# changing current direcrtory to selected, if neccesary
-if [[ ! -d $NEW_CURRENT_DIR ]];then
-    mkdir $NEW_CURRENT_DIR
-    echo "Creating output directory $NEW_CURRENT_DIR"
-fi
-
-
-if [[ -d $NEW_CURRENT_DIR ]];then
-    echo "Setting output directory: $NEW_CURRENT_DIR"
-    $CURRENT_DIR=$NEW_CURRENT_DIR
-fi
 
 # Initialize log file
 log_file=$CURRENT_DIR/log.txt
