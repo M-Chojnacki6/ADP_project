@@ -70,7 +70,7 @@ If you have prepared same files from middle analasys, but your work was interrup
 ```{bash}
 ./ECT/ect.sh -i species.txt -e 3 
 ```
-start workflow from filetering step. To see detailed description, use flag -h or --help. 
+start workflow from filetering step (file 'species_merged[x]_all_seqs.fasta' - output of MMseq2 clustering). To see detailed description, use flag -h or --help. 
 
 >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
 
