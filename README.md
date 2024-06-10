@@ -17,6 +17,7 @@ There are many tools avaiable to make philogenic tree given multiple sequences a
 5) making multiple sequences alignment using [ClustalW](http://www.clustal.org/clustal2/), [Muscle](https://drive5.com/muscle/) or [Mafft](https://mafft.cbrc.jp/alignment/software/)
 6) constructing NJ trees using [Biopython](https://biopython.org/wiki/Phylo) package
 7) construction consensus tree using [DendroPy](https://pypi.org/project/DendroPy/) package
+8) simple visualiation of computed consensus tree using [Biopythob](https://biopython.org/wiki/Phylo)
 
 ## Requirements
 
@@ -54,9 +55,18 @@ chmod +x ect.sh
 
 Example usage: If the list of species called `species.txt` is located in the parent directory relative to ECT directory then run:
 
-```
+```{bash}
 ./ECT/ect.sh -i species.txt
 ```
+To show the most basic help, run:
+
+```{bash}
+./ECT/ect.sh -h
+# or
+./ECT/ect.sh --help
+```
+
+If you have prepared same files from middle analasys, but your work was interrupted, leading to stop of the of the workflow, yu can use -e optin, to start from the last saved point
 
 >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
 
