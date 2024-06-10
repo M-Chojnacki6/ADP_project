@@ -79,6 +79,11 @@ starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - 
 - -e, --step         Select step, from which you wont to start script
   - 0    All steps (default)
   - 1    start with merging step
+  - 2    start with MMseq2 clustering
+  - 3    start with filtering step
+  - 4    Start with making MSA
+  - 5    start with construction NJ trees
+  - 6    start with preparing consensus (final) tree
 
 
 >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
