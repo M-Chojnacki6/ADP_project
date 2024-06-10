@@ -165,10 +165,15 @@ else
     #######################################
     if [ $STEP -lt 1 ]; then
         if [ $SHOW_INFO -lt 1 ]; then
+            log_message "Updating local proteomes database..."
+
+            run_and_log "python3 $PROJECT_DIR/scripts/update_taxon_lib.py -l $PROJECT_DIR/proteome_database/taxon_library.csv " "Updating database"
+
             log_message "Fetching proteomes from $SPECIES_LIST..."
 
             run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py $SPECIES_LIST" "Fetching"
         else
+            run_and_log "python3 $PROJECT_DIR/scripts/update_taxon_lib.py -h" "Showing updating taxonom library help"
             run_and_log "python3 $PROJECT_DIR/scripts/fetch_proteomes.py -h" "Showing fetching help"
             run_and_log "python3 $PROJECT_DIR/scripts/remove_proteomes.py -h" "Showing removing help"
         fi
