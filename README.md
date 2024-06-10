@@ -74,6 +74,7 @@ starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - 
 
 ### Options description
 | short flag | long flag | description |
+|------------|-----------|-------------|
 | -i | --input  |      Text file with species names or taxonomy id in lines (default: species.txt) |
 - -p, --minCons      Minimum support consensus for consensus tree construction; (default: 0.5)
 - -e, --step         Select step, from which you wont to start script
