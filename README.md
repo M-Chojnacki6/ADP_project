@@ -77,8 +77,8 @@ starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - 
 - -i, --input        Text file with species names or taxonomy id in lines (default: species.txt)
 - -p, --minCons      Minimum support consensus for consensus tree construction; (default: 0.5)
 - -e, --step         Select step, from which you wont to start script
--- 0    All steps (default)
--- 1    start with merging step
+  - 0    All steps (default)
+  - 1    start with merging step
 
 
 >**DISCLAIMER**: We cannot guarantee that the resulting trees will accurately reflect the true relationships between species, especially if the provided species are distantly related.
