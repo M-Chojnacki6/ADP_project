@@ -76,15 +76,15 @@ starts workflow from filetering step (file `species_merged[x]_all_seqs.fasta` - 
 | short flag | long flag | description |
 |------------|-----------|-------------|
 | -i | --input  |      Text file with species names or taxonomy id in lines (default: species.txt) |
-- -p, --minCons      Minimum support consensus for consensus tree construction; (default: 0.5)
-- -e, --step         Select step, from which you wont to start script
+| -p | --minCons |      Minimum support consensus for consensus tree construction; (default: 0.5) |
+| -e | --step   |      Select step, from which you wont to start script
   - 0    All steps (default)
   - 1    start with merging step
   - 2    start with MMseq2 clustering
   - 3    start with filtering step
   - 4    Start with making MSA
   - 5    start with construction NJ trees
-  - 6    start with preparing consensus (final) tree
+  - 6    start with preparing consensus (final) tree |
 - -s, --msi       MMseq2 option: list matches above this sequence identity (range 0.0-1.0); (default: 0.3)
 - -l, --clusterMode  MMseq2 option: select clustering mode 
 - -v, --covMode      MMseq2 option:  sevuence coverage mode
