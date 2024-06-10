@@ -1,15 +1,15 @@
 import os
 import argparse
 import re
-from remove_proteomes import delete_path
-
+import subprocess
 taxon_library=os.path.join("taxon_library.csv")
 
 
 
 def parse_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, 
-    description=f"""Update information in {taxon_library}.""")
+    description=f"""Update information in {taxon_library}.
+    This script removes all lines in local library file containing paths leading to nonexisting fasta.gz files""")
     parser.add_argument('-l',metavar= 'l',nargs=1, help=f"""Path to the itaxon_library.csv containing 
         informations about downloaded proteomes. Default = ./ECT/proteome_database/{taxon_library}""",
         default=f"./ECT/proteome_database/{taxon_library}")
@@ -28,6 +28,20 @@ def parse_args():
     else:
         return None
 
+def delete_path_lib(paths,library):
+    result = subprocess.run(['grep', f'{paths}' , library],
+        stdout=subprocess.PIPE)
+    if result.returncode==0:
+        result=result.stdout.decode("utf-8").strip()
+        os.system(f"echo '{result}' >> {library}")
+        os.system(f"sort {library} | uniq -u > {library}.tmp")
+        os.system(f"cat {library}.tmp > {library}")
+        os.system(f"rm {library}.tmp")
+        result=result.split()[-1].strip()
+        print(f">>> removing file {result} from library\nDONE!")
+        return False
+    return True
+
 def find_ids(library):
     names_list=[]
     with open(library, 'r') as txtfile:
@@ -35,12 +49,10 @@ def find_ids(library):
             linet=line.strip().split("\t")[-1]
             if not os.path.isfile(linet) and not linet in names_list:
                 print(f"Cannot find file: {linet} : corresponding paths in library will be removed")
-                names_list.append(line)
-    for species in names_list:
-        print(f"\nRemoving {species}...")
-        res=delete_path(species,library)
-        if res:
-            print(f"FAILED: cannot found organism in {library}\n-> organism {species} has been probably already removed")
+                res=delete_path_lib(linet,library)
+                if res:
+                    print(f"FAILED: cannot found path in {library}\n-> path {species} has been probably already removed")
+    
 
 def main():
     inputs=parse_args()
