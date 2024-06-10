@@ -83,7 +83,8 @@ Shorter version of description provided in --help.
 | -l | --clusterMode | MMseq2 option: select clustering mode |
 | -v | --covMode  |    MMseq2 option:  sevuence coverage mode |
 | -c | --cov |  MMseq2 option: list matches above this fraction of aligned (covered) residues; (default: 0.800) |
-| -m | --msa    |      Algorithm used to MSA (default ClustalW) | 
+| -m | --msa    |      Algorithm used to MSA (default: ClustalW) | 
+| -d | --description | Show help information of not-skipped subscripts |
 | -e | --step   |      Select step, from which you wont to start script |
   - 0    All steps (default)
   - 1    start with merging step
